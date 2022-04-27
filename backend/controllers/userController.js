@@ -90,4 +90,33 @@ const getProfile = asyncHandler(async (req, res) => {
   }
 });
 
-export { authUser, registerUser, getProfile };
+const updateProfile = asyncHandler(async (req, res) => {
+  const { name, email, password } = req.body;
+
+  User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $set: {
+        name,
+        email,
+        password,
+      },
+    },
+    { new: true },
+    (err, transaction) => {
+      if (err) {
+        return res.status(400).json({
+          success: false,
+          error: err,
+        });
+      } else {
+        return res.json({
+          success: true,
+          data: transaction,
+        });
+      }
+    }
+  );
+});
+
+export { authUser, registerUser, getProfile, updateProfile };

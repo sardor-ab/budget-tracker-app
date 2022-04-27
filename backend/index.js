@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import express from "express";
 import connectDB from "./configs/db.js";
 import userRoutes from "./routes/userRotes.js";
+import accountRoutes from "./routes/accountRoutes.js";
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use("/api/users", userRoutes);
+app.use("/api/cards", accountRoutes);
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
 // app.listen(3000, "0.0.0.0", function () {
