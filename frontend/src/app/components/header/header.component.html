@@ -1,0 +1,81 @@
+<header class="header" *ngIf="isUserLoggedIn">
+  <div class="header__content">
+    <div class="header__content-logo">
+      <img
+        src="../../../assets/images/Budget_Track_App.png"
+        alt="Budget Track App"
+      />
+    </div>
+    <mat-nav-list
+      [ngClass]="{
+        'mobile-view-visible-true': width < 1024 && isMenuOpened
+      }"
+      class="header__content-navigaton"
+      (click)="toggleMenu()"
+    >
+      <mat-list-item
+        class="header__content-navigation-item"
+        (click)="redirect('/categories')"
+        [ngClass]="currentRoute() === '/categories' ? 'active' : ''"
+      >
+        <span class="mat-list-text"> Categories </span>
+      </mat-list-item>
+      <mat-list-item
+        class="header__content-navigation-item"
+        (click)="redirect('/subscriptions')"
+        [ngClass]="currentRoute() === '/subscriptions' ? 'active' : ''"
+      >
+        <span class="mat-list-text"> Subscriptions </span>
+      </mat-list-item>
+      <mat-list-item
+        class="header__content-navigation-item"
+        (click)="redirect('/obligatory')"
+        [ngClass]="currentRoute() === '/obligatory' ? 'active' : ''"
+      >
+        <span class="mat-list-text"> Obligatory </span>
+      </mat-list-item>
+      <mat-list-item
+        class="header__content-navigation-item"
+        (click)="redirect('/statistics')"
+        [ngClass]="currentRoute() === '/statistics' ? 'active' : ''"
+      >
+        <span class="mat-list-text"> Statistics </span>
+      </mat-list-item>
+      <mat-list-item
+        class="header__content-navigation-item"
+        *ngIf="isUserAdmin()"
+        [ngClass]="currentRoute() === '/admin' ? 'active' : ''"
+      >
+        <span class="mat-list-text">Admin</span>
+      </mat-list-item>
+    </mat-nav-list>
+
+    <div class="header__content-profile">
+      <button mat-button [matMenuTriggerFor]="menu">
+        <mat-icon>account_circle_outlined_icon</mat-icon>
+        <span class="header__user-name">Sardor</span>
+      </button>
+      <mat-menu #menu="matMenu" xPosition="before">
+        <button mat-menu-item>
+          <mat-icon>settings</mat-icon>
+          <span>Settings</span>
+        </button>
+        <button mat-menu-item (click)="onLogout()">
+          <mat-icon>exit_to_app</mat-icon>
+          <span>Logout</span>
+        </button>
+      </mat-menu>
+    </div>
+
+    <div class="header__content-toggle">
+      <button
+        class="header__content-toggle-icon-button"
+        mat-icon-button
+        (click)="toggleMenu()"
+      >
+        <mat-icon *ngIf="!isMenuOpened">menu</mat-icon>
+        <mat-icon *ngIf="isMenuOpened" color="warn">close</mat-icon>
+      </button>
+    </div>
+  </div>
+</header>

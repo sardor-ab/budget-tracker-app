@@ -21,9 +21,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use("/api/users", userRoutes);
-app.use("/api/cards", accountRoutes);
+app.use("/api/accounts", accountRoutes);
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
+
+// ***Below code to run on other device beside, the local***
+
 // app.listen(3000, "0.0.0.0", function () {
 //   console.log("Listening to port:  " + 3000);
 // });
+
+// ***Above code to run on other device beside, the local***
