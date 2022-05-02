@@ -1,0 +1,89 @@
+<section class="registration">
+  <div class="registration-form">
+    <h1>Sign up</h1>
+    <form
+      class="registration-form__form"
+      [formGroup]="registrationForm"
+      (ngSubmit)="onSubmit()"
+    >
+      <mat-form-field class="registration-form__row" appearance="outline">
+        <mat-label>Name</mat-label>
+        <input matInput placeholder="John Doe" formControlName="name" />
+        <mat-error *ngIf="name?.errors?.['required']">
+          Name is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="registration-form__row" appearance="outline">
+        <mat-label>Email</mat-label>
+        <input
+          matInput
+          type="email"
+          placeholder="username@example.com"
+          formControlName="email"
+        />
+        <mat-error *ngIf="email?.errors?.['required']">
+          Email is <strong>required</strong>
+        </mat-error>
+        <mat-error *ngIf="email?.errors?.['pattern']">
+          Email address <strong>is invalid</strong>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="registration-form__row" appearance="outline">
+        <mat-label>Password</mat-label>
+        <input
+          matInput
+          type="password"
+          formControlName="password"
+          [type]="isPasswordVisible ? 'text' : 'password'"
+        />
+        <mat-icon (click)="togglePasswordVisibility()" matSuffix>{{
+          isPasswordVisible ? "visibility_off" : "visibility"
+        }}</mat-icon>
+        <mat-error *ngIf="password?.errors?.['required']">
+          Password is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="registration-form__row" appearance="outline">
+        <mat-label>Confirm Password</mat-label>
+        <input
+          matInput
+          type="password"
+          formControlName="confirmPassword"
+          [type]="isPasswordVisible ? 'text' : 'password'"
+        />
+        <mat-icon (click)="togglePasswordVisibility()" matSuffix>{{
+          isPasswordVisible ? "visibility_off" : "visibility"
+        }}</mat-icon>
+
+        <mat-error *ngIf="confirmationPassword?.errors?.['required']">
+          Password is <strong>required</strong> to be confirmed
+        </mat-error>
+        <!-- <mat-error *ngIf="registrationForm.errors?.['notmatched']">
+          Confirmation Password is <strong>required</strong> to the same with
+          password
+        </mat-error> -->
+      </mat-form-field>
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        [disabled]="registrationForm.invalid"
+      >
+        Register
+      </button>
+    </form>
+    <div class="registration-form__text-divided">
+      <div class="line"><mat-divider></mat-divider></div>
+      <span class="text">OR</span>
+      <div class="line"><mat-divider></mat-divider></div>
+    </div>
+    <div class="registration-form__otherEntries">
+      <button mat-raised-button>
+        <mat-icon svgIcon="google"></mat-icon>
+        <span> Continue with Google </span>
+      </button>
+    </div>
+  </div>
+</section>

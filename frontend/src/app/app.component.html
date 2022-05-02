@@ -1,5 +1,9 @@
 <mat-sidenav-container class="sidenav">
   <mat-sidenav-content class="sidenave__content">
-    <app-header [isUserLoggedIn]="true" (logout)="logout()"></app-header>
+    <app-header
+      [isUserLoggedIn]="isUserLoggedIn"
+      (logout)="logout()"
+    ></app-header>
+    <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>

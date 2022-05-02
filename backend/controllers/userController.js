@@ -26,14 +26,16 @@ const authUser = asyncHandler(async (req, res) => {
     const token = generateToken(payload);
 
     res.json({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      token: `Bearer ${token}`,
+      success: true,
+      data: {
+        id: user.id,
+        name: user.name,
+        role: user.role,
+        token: `Bearer ${token}`,
+      },
     });
   } else {
-    res.status(401).json({ message: "Invalid credentials" });
+    res.status(401).json({ success: false, message: "Invalid credentials" });
   }
 });
 
@@ -43,10 +45,12 @@ const authUser = asyncHandler(async (req, res) => {
 const registerUser = asyncHandler(async (req, res) => {
   const { email, password, name } = req.body;
 
-  const userExists = User.findOne({ email });
+  const userExists = await User.findOne({ email: email });
 
   if (userExists) {
-    res.status(400).json({ message: "User already exists!" });
+    return res
+      .status(400)
+      .json({ success: false, message: "User already exists!" });
   }
 
   const user = await User.create({
@@ -58,13 +62,18 @@ const registerUser = asyncHandler(async (req, res) => {
   if (user) {
     const token = generateToken({ user });
 
-    res.status(201).json({
-      id: user.id,
-      email: user.email,
-      token: `Bearer ${token}`,
+    return res.status(201).json({
+      success: true,
+      data: {
+        id: user.id,
+        name: user.name,
+        role: user.role,
+        token: `Bearer ${token}`,
+      },
     });
   } else {
-    res.status(400).json({
+    return res.status(400).json({
+      success: false,
       message: "Invalid user data!",
     });
   }
