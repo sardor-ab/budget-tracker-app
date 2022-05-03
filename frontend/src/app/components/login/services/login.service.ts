@@ -20,6 +20,7 @@ export class LoginService {
     localStorage.removeItem('token');
     localStorage.removeItem('expiresAt');
   }
+
   isUserLoggedIn(): boolean {
     return new Date().getTime() < Number(localStorage.getItem('expiresAt'));
   }

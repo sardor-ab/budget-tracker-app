@@ -35,7 +35,9 @@ const authUser = asyncHandler(async (req, res) => {
       },
     });
   } else {
-    res.status(401).json({ success: false, message: "Invalid credentials" });
+    res
+      .status(401)
+      .json({ success: false, message: "Incorrect username or password" });
   }
 });
 
@@ -50,7 +52,7 @@ const registerUser = asyncHandler(async (req, res) => {
   if (userExists) {
     return res
       .status(400)
-      .json({ success: false, message: "User already exists!" });
+      .json({ success: false, message: "Email account is already in use!" });
   }
 
   const user = await User.create({

@@ -36,6 +36,9 @@
           Password is <strong>required</strong>
         </mat-error>
       </mat-form-field>
+      <mat-error *ngIf="invalidCredentials">
+        <mat-icon>error_outline</mat-icon> {{ errorText }}
+      </mat-error>
 
       <div class="login-form__extra">
         <span

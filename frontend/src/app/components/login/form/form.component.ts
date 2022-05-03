@@ -6,6 +6,7 @@ import { IUserResponceModel } from '../../../models/userResponceModel';
 import { LoginService } from '../services/login.service';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ErrorService } from 'src/app/config/services/error.service';
 
 @Component({
   selector: 'app-form',
@@ -16,6 +17,7 @@ export class FormComponent implements OnInit {
   constructor(
     private router: Router,
     private loginService: LoginService,
+    private errorService: ErrorService,
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer
   ) {
@@ -27,6 +29,8 @@ export class FormComponent implements OnInit {
     );
   }
   isPasswordVisible: boolean = false;
+  invalidCredentials: boolean = false;
+  errorText: string = '';
   subscription: Subscription = new Subscription();
   responce: IUserResponceModel = {
     success: false,
@@ -37,7 +41,22 @@ export class FormComponent implements OnInit {
     },
   };
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.invalidCredentials = false;
+
+    this.subscription = this.errorService
+      .getisInvalidCredentialsVisibleState$()
+      .subscribe((data) => {
+        if (data) {
+          this.errorText = this.errorService.getErrorText();
+          this.invalidCredentials = true;
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
 
   onSubmit(): void {
     const { email, password } = this.loginForm.value;
@@ -47,6 +66,7 @@ export class FormComponent implements OnInit {
       .subscribe((result) => {
         if (result.success) {
           this.redirect('dashboard');
+          this.errorService.hideErrorText();
         }
       });
   }

@@ -9,6 +9,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [],
@@ -24,6 +25,7 @@ import { MatDividerModule } from '@angular/material/divider';
     ReactiveFormsModule,
     FormsModule,
     MatDividerModule,
+    MatDialogModule,
   ],
   exports: [
     MatInputModule,
@@ -36,6 +38,7 @@ import { MatDividerModule } from '@angular/material/divider';
     ReactiveFormsModule,
     FormsModule,
     MatDividerModule,
+    MatDialogModule,
   ],
 })
 export class SharedModule {}

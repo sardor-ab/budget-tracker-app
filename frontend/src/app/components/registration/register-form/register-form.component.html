@@ -21,11 +21,8 @@
           placeholder="username@example.com"
           formControlName="email"
         />
-        <mat-error *ngIf="email?.errors?.['required']">
-          Email is <strong>required</strong>
-        </mat-error>
-        <mat-error *ngIf="email?.errors?.['pattern']">
-          Email address <strong>is invalid</strong>
+        <mat-error *ngIf="email?.errors">
+          {{ getErrorMessage() }}
         </mat-error>
       </mat-form-field>
 
@@ -60,11 +57,19 @@
         <mat-error *ngIf="confirmationPassword?.errors?.['required']">
           Password is <strong>required</strong> to be confirmed
         </mat-error>
-        <!-- <mat-error *ngIf="registrationForm.errors?.['notmatched']">
+        <mat-error *ngIf="registrationForm.errors?.['notmatched']">
           Confirmation Password is <strong>required</strong> to the same with
           password
-        </mat-error> -->
+        </mat-error>
       </mat-form-field>
+      <div class="registration-form__extra">
+        Have an account?
+        <span
+          class="registration-form__extra-item login"
+          (click)="redirect('login')"
+          >Login
+        </span>
+      </div>
       <button
         mat-raised-button
         color="primary"

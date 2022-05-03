@@ -36,7 +36,7 @@
 
     &__extra {
       font-size: 14px;
-      margin-bottom: 2em;
+      margin: 2em 0;
 
       &-item {
         color: #e6bdb9;
@@ -65,4 +65,12 @@
       }
     }
   }
+}
+::ng-deep .mat-error {
+  align-items: center;
+  display: flex !important;
+}
+
+::ng-deep .mat-button-disabled {
+  opacity: 0.5;
 }

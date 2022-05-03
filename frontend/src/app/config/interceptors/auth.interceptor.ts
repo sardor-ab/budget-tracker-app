@@ -9,10 +9,15 @@ import {
 import { catchError, Observable, throwError } from 'rxjs';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { Router } from '@angular/router';
+import { ErrorService } from '../services/error.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private loginService: LoginService, private router: Router) {}
+  constructor(
+    private loginService: LoginService,
+    private router: Router,
+    private errorService: ErrorService
+  ) {}
 
   intercept(
     request: HttpRequest<unknown>,
@@ -28,6 +33,9 @@ export class AuthInterceptor implements HttpInterceptor {
 
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
+        this.errorService.provideError(error.error?.message);
+        this.errorService.showErrorText();
+
         if (error.status === 401) {
           this.loginService.logout();
           this.router.navigate(['login']);

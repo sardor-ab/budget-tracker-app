@@ -12,6 +12,8 @@ import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { RegisterService } from '../services/register.service';
 import { Router } from '@angular/router';
+import { ErrorService } from 'src/app/config/services/error.service';
+import { DialogService } from '../../dialog/services/dialog.service';
 
 @Component({
   selector: 'app-register-form',
@@ -22,8 +24,10 @@ export class RegisterFormComponent implements OnInit {
   constructor(
     private router: Router,
     private matIconRegistry: MatIconRegistry,
+    private errorService: ErrorService,
     private domSanitizer: DomSanitizer,
-    private registerService: RegisterService
+    private registerService: RegisterService,
+    private dialogService: DialogService
   ) {
     this.matIconRegistry.addSvgIcon(
       'google',
@@ -33,9 +37,35 @@ export class RegisterFormComponent implements OnInit {
     );
   }
   isPasswordVisible: boolean = false;
+  errorText: string = '';
+  isEmailUsed: boolean = false;
   subscription: Subscription = new Subscription();
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.subscription = this.errorService
+      .getisInvalidCredentialsVisibleState$()
+      .subscribe((state) => {
+        if (state) {
+          this.errorText = this.errorService.getErrorText();
+          this.dialogService.provideMessage(this.errorText);
+          this.dialogService.showDialog('Error');
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
+  getErrorMessage() {
+    return this.email?.errors?.['required']
+      ? (this.errorText = 'Email is required')
+      : this.email?.errors?.['pattern']
+      ? (this.errorText = 'Not a valid email')
+      : this.isEmailUsed
+      ? this.errorText
+      : '';
+  }
 
   passwordMatchingValidatior: ValidatorFn = (
     control: AbstractControl
@@ -95,6 +125,7 @@ export class RegisterFormComponent implements OnInit {
       .subscribe((res) => {
         if (res.success) {
           this.redirect('dashboard');
+          this.isEmailUsed = false;
         }
       });
   }
