@@ -7,6 +7,8 @@ import { LoginService } from '../services/login.service';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ErrorService } from 'src/app/config/services/error.service';
+import { SpinnerService } from '../../spinner/services/spinner.service';
+import { delay } from 'rxjs/operators';
 
 @Component({
   selector: 'app-form',
@@ -19,7 +21,8 @@ export class FormComponent implements OnInit {
     private loginService: LoginService,
     private errorService: ErrorService,
     private matIconRegistry: MatIconRegistry,
-    private domSanitizer: DomSanitizer
+    private domSanitizer: DomSanitizer,
+    private spinnerService: SpinnerService
   ) {
     this.matIconRegistry.addSvgIcon(
       'google',
@@ -61,6 +64,8 @@ export class FormComponent implements OnInit {
   onSubmit(): void {
     const { email, password } = this.loginForm.value;
 
+    this.spinnerService.showSpinner();
+
     this.subscription = this.loginService
       .login({ email, password })
       .subscribe((result) => {
@@ -68,6 +73,7 @@ export class FormComponent implements OnInit {
           this.redirect('dashboard');
           this.errorService.hideErrorText();
         }
+        this.spinnerService.hideSpinner();
       });
   }
 

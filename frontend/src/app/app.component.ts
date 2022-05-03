@@ -1,15 +1,31 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { LoginService } from './components/login/services/login.service';
+import { SpinnerService } from './components/spinner/services/spinner.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent {
-  constructor(private loginService: LoginService, private router: Router) {}
+export class AppComponent implements OnInit {
+  constructor(
+    private loginService: LoginService,
+    private router: Router,
+    private spinnerService: SpinnerService
+  ) {}
   title = 'frontend';
+  isSpinnerVisible: boolean = false;
+  subscription: Subscription = new Subscription();
+
+  ngOnInit(): void {
+    this.subscription = this.spinnerService
+      .getSpinnerState$()
+      .subscribe((result) => {
+        this.isSpinnerVisible = result;
+      });
+  }
 
   logout() {
     this.loginService.logout();
@@ -18,5 +34,9 @@ export class AppComponent {
 
   get isUserLoggedIn(): boolean {
     return this.loginService.isUserLoggedIn();
+  }
+
+  onDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }

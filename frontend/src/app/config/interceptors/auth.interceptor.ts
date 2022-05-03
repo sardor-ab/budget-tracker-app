@@ -10,13 +10,15 @@ import { catchError, Observable, throwError } from 'rxjs';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { Router } from '@angular/router';
 import { ErrorService } from '../services/error.service';
+import { SpinnerService } from 'src/app/components/spinner/services/spinner.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   constructor(
     private loginService: LoginService,
     private router: Router,
-    private errorService: ErrorService
+    private errorService: ErrorService,
+    private spinnerService: SpinnerService
   ) {}
 
   intercept(
@@ -40,6 +42,7 @@ export class AuthInterceptor implements HttpInterceptor {
           this.loginService.logout();
           this.router.navigate(['login']);
         }
+        this.spinnerService.hideSpinner();
         return throwError(() => error);
       })
     );

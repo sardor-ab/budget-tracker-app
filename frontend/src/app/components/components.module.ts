@@ -11,9 +11,14 @@ import { AuthInterceptor } from '../config/interceptors/auth.interceptor';
 import { DialogComponent } from './dialog/dialog.component';
 
 @NgModule({
-  declarations: [HeaderComponent, DashboardComponent, SpinnerComponent, DialogComponent],
+  declarations: [
+    HeaderComponent,
+    DashboardComponent,
+    SpinnerComponent,
+    DialogComponent,
+  ],
   imports: [CommonModule, SharedModule, LoginModule, RegistrationModule],
-  exports: [HeaderComponent],
+  exports: [HeaderComponent, SpinnerComponent],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,

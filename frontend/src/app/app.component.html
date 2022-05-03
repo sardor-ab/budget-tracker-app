@@ -1,5 +1,6 @@
 <mat-sidenav-container class="sidenav">
   <mat-sidenav-content class="sidenave__content">
+    <app-spinner *ngIf="isSpinnerVisible"></app-spinner>
     <app-header
       [isUserLoggedIn]="isUserLoggedIn"
       (logout)="logout()"
