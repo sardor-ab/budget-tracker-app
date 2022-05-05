@@ -80,29 +80,30 @@ const createAccount = asyncHandler(async (req, res) => {
 //@access PRIVATE
 const updateAccount = asyncHandler(async (req, res) => {
   const { title, currency, balance, type } = req.body;
-  const { user } = req.user;
 
-  User.findByIdAndUpdate(
-    { user, _id: req.params._id },
+  Account.findByIdAndUpdate(
+    req.params.id,
     {
       $set: {
         title,
         currency,
-        type,
         balance,
+        type,
       },
     },
     { new: true },
-    (err, card) => {
-      if (err) {
-        return res.status(400).json({
-          success: false,
-          error: err,
-        });
+    function (error, { title, currency, balance, type }) {
+      if (error) {
+        res.send(error);
       } else {
-        return res.json({
+        res.json({
           success: true,
-          data: card,
+          data: {
+            title,
+            currency,
+            balance,
+            type,
+          },
         });
       }
     }

@@ -24,6 +24,12 @@
     &-right-title {
       @include fontSW(2em);
       opacity: 0.75;
+
+      display: block;
+      white-space: nowrap;
+      width: 5em;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     &-right-balance {

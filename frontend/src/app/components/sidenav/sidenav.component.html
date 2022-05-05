@@ -115,6 +115,7 @@
     <button
       *ngIf="isTransactionEdit || isAccountEdit"
       mat-button
+      [disabled]="accountForm.invalid"
       (click)="onEditSave()"
       class="btn btn-save"
     >

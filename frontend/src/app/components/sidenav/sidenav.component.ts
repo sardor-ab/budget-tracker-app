@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { AccountsService } from '../accounts/services/accounts.service';
 import { SidenavService } from './services/sidenav.service';
 
 @Component({
@@ -9,7 +10,10 @@ import { SidenavService } from './services/sidenav.service';
   styleUrls: ['./sidenav.component.scss'],
 })
 export class SidenavComponent implements OnInit {
-  constructor(private sidenavService: SidenavService) {}
+  constructor(
+    private sidenavService: SidenavService,
+    private accountsService: AccountsService
+  ) {}
   subscription: Subscription = new Subscription();
   isTransaction: boolean = false;
   isTransactionEdit: boolean = false;
@@ -30,6 +34,9 @@ export class SidenavComponent implements OnInit {
   accountForm: FormGroup = new FormGroup({
     title: new FormControl('', [Validators.required]),
     description: new FormControl(''),
+    currency: new FormControl(''),
+    balance: new FormControl(''),
+    type: new FormControl(''),
   });
 
   get title() {
@@ -45,8 +52,6 @@ export class SidenavComponent implements OnInit {
       .getSidenavData$()
       .subscribe((state) => {
         this.responce = state;
-
-        console.log(state);
 
         if (this.responce?.title === 'Account') {
           this.isAccount = true;
@@ -72,6 +77,7 @@ export class SidenavComponent implements OnInit {
       this.isAccount = false;
 
       this.title?.setValue(this.responce.account?.title);
+      this.description?.setValue(this.responce.account?.description);
     }
   }
 
@@ -85,7 +91,20 @@ export class SidenavComponent implements OnInit {
 
   onEditSave() {
     //some actions to db
-    console.log('Data edited');
+    // console.log('Data edited');
+    // console.log(this.accountForm.value);
+
+    this.accountForm.get('currency')?.setValue(this.responce.account?.currency);
+    this.accountForm.get('balance')?.setValue(this.responce.account?.balance);
+    this.accountForm.get('type')?.setValue(this.responce.account?.type);
+
+    this.subscription = this.accountsService
+      .editAccount(this.accountForm.value, this.responce.account?._id!)
+      .subscribe((result) => {
+        if (result.success) {
+          this.accountsService.requestUpdate();
+        }
+      });
     this.onClose();
   }
 
