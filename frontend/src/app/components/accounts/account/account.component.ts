@@ -10,6 +10,7 @@ import { AccountsResponce } from '../models/accountsResponceModel';
 export class AccountComponent implements OnInit {
   constructor(private sidenavService: SidenavService) {}
   @Input() accounts!: AccountsResponce['data'];
+  active: number = 0;
 
   ngOnInit(): void {}
 
@@ -21,5 +22,9 @@ export class AccountComponent implements OnInit {
 
     this.sidenavService.setSidenavData$(data);
     this.sidenavService.showSideNav();
+  }
+
+  setActive(index: number) {
+    this.active = index;
   }
 }

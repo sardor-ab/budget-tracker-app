@@ -1,5 +1,10 @@
 <ng-container *ngIf="accounts">
-  <div class="account active" *ngFor="let account of accounts">
+  <div
+    class="account"
+    *ngFor="let account of accounts; index as i"
+    [ngClass]="i === active ? 'active' : ''"
+    (click)="setActive(i)"
+  >
     <div class="account__content">
       <div class="account__content-right">
         <div class="account__content-right-title">{{ account.title }}</div>
