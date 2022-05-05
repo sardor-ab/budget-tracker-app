@@ -15,3 +15,13 @@
     }
   }
 }
+
+::ng-deep .mat-drawer-container {
+  overflow-y: scroll !important;
+
+  &.scroll-off {
+    @include mixin.for-laptop-down {
+      overflow: hidden !important;
+    }
+  }
+}
