@@ -1,1 +1,124 @@
-<p>sidenav works!</p>
+<div class="aside__content">
+  <div class="aside__content-header">
+    <span class="aside__content-header-text"
+      >{{ responce?.title }} Information</span
+    >
+
+    <div class="aside__content-header-icons">
+      <mat-icon
+        class="aside__content-header-icons-icon edit"
+        (click)="openEditPanel(responce?.title!)"
+        *ngIf="!isTransactionEdit && !isAccountEdit"
+        >edit</mat-icon
+      >
+      <mat-icon
+        class="aside__content-header-icons-icon delete"
+        *ngIf="!isTransactionEdit && !isAccountEdit"
+        >delete</mat-icon
+      >
+      <mat-icon
+        class="aside__content-header-icons-icon close"
+        (click)="onClose()"
+        >close</mat-icon
+      >
+    </div>
+  </div>
+
+  <div class="aside__content-body">
+    <div
+      class="aside__content-body-table"
+      *ngIf="isAccount && responce?.account"
+    >
+      <div class="aside__content-body-table-row">
+        <div class="aside__content-body-table-row-left">
+          <span class="aside__content-body-table-row-left-text"> Title: </span>
+        </div>
+        <div class="aside__content-body-table-row-right">
+          <span class="aside__content-body-table-row-right-text">
+            {{ responce?.account?.title }}
+          </span>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="aside__content-body-table-row">
+        <div class="aside__content-body-table-row-left">
+          <span class="aside__content-body-table-row-left-text">
+            Balance:
+          </span>
+        </div>
+        <div class="aside__content-body-table-row-right">
+          <span class="aside__content-body-table-row-right-text">
+            {{ responce?.account?.balance }}
+          </span>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="aside__content-body-table-row">
+        <div class="aside__content-body-table-row-left">
+          <span class="aside__content-body-table-row-left-text">
+            Currency:
+          </span>
+        </div>
+        <div class="aside__content-body-table-row-right">
+          <span class="aside__content-body-table-row-right-text">
+            {{ responce?.account?.currency }}
+          </span>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="aside__content-body-table-row">
+        <div class="aside__content-body-table-row-left">
+          <span class="aside__content-body-table-row-left-text">
+            Description:
+          </span>
+        </div>
+        <div class="aside__content-body-table-row-right">
+          <span class="aside__content-body-table-row-right-text">
+            {{ responce?.account?.description }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="aside__content-body-edit" *ngIf="isAccountEdit">
+      <form [formGroup]="accountForm" class="aside__content-body-edit-form">
+        <mat-form-field class="account-edit-form__row" appearance="outline">
+          <mat-label>Title</mat-label>
+          <input matInput formControlName="title" />
+          <mat-error *ngIf="title?.errors?.['required']">
+            Title is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="account-edit-form__row" appearance="outline">
+          <mat-label>Description</mat-label>
+          <input matInput formControlName="description" />
+        </mat-form-field>
+      </form>
+    </div>
+  </div>
+
+  <div class="aside__content-footer">
+    <button
+      *ngIf="!isTransactionEdit && !isAccountEdit"
+      mat-button
+      (click)="onClose()"
+    >
+      Close
+    </button>
+    <button
+      *ngIf="isTransactionEdit || isAccountEdit"
+      mat-button
+      (click)="onEditClose()"
+    >
+      Cancel
+    </button>
+    <button
+      *ngIf="isTransactionEdit || isAccountEdit"
+      mat-button
+      (click)="onEditSave()"
+      class="btn btn-save"
+    >
+      Save
+    </button>
+  </div>
+</div>

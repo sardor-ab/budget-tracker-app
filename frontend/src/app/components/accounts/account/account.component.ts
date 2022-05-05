@@ -16,7 +16,7 @@ export class AccountComponent implements OnInit {
   onEditAccountButtonClicked(account: any) {
     const data = {
       title: 'Account',
-      accountData: account,
+      account: account,
     };
 
     this.sidenavService.setSidenavData$(data);

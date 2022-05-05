@@ -23,3 +23,8 @@
     @content;
   }
 }
+
+@mixin primary-active-button {
+  background: #b9e2e6;
+  color: #373737;
+}

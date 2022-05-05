@@ -1,0 +1,76 @@
+@use "../../../mixins.scss" as mixin;
+
+.aside__content {
+  &-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &-text {
+      font-size: 2rem;
+      line-height: 2rem;
+
+      @include mixin.for-tablet-down {
+        font-size: 1.5rem;
+        line-height: 1.5rem;
+      }
+    }
+
+    &-icons {
+      cursor: pointer;
+    }
+  }
+
+  &-body {
+    margin-top: 2rem;
+    //try to remove after font changing line height addition
+    &-table {
+      &-row {
+        display: flex;
+        padding: 0.5rem 0;
+        //try to remove after font changing line height addition
+        &-left {
+          flex: 0.25;
+
+          &-text {
+            font-size: 1rem;
+            line-height: 1rem;
+            font-weight: 500;
+          }
+
+          @include mixin.for-tablet-down {
+            flex: 0.4;
+          }
+        }
+        &-right {
+          flex: 0.75;
+
+          &-text {
+            font-weight: 300;
+          }
+
+          @include mixin.for-tablet-down {
+            flex: 0.6;
+          }
+        }
+      }
+    }
+
+    &-edit {
+      &-form {
+        display: flex;
+        flex-direction: column;
+      }
+    }
+  }
+
+  &-footer {
+    margin-top: 100%;
+    display: flex;
+    justify-content: flex-end;
+
+    > .btn-save {
+      @include mixin.primary-active-button;
+    }
+  }
+}

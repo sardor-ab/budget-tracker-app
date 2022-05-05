@@ -22,12 +22,13 @@ export class SidenavService {
 
   setSidenavData$(sharedData: {
     title: string;
-    accountData: {
+    account: {
       title: string;
-      amount: number;
+      balance: number;
       currency: string;
       description: string;
       type: string;
+      _id: string;
     };
   }) {
     this.data$.next(sharedData);
@@ -50,5 +51,6 @@ export interface AllowedData {
     currency: string;
     description: string;
     type: string;
+    _id: string;
   };
 }

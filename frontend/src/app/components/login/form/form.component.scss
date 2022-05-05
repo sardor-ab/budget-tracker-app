@@ -1,4 +1,5 @@
 @use "../../../../breakpoints.scss" as bps;
+@use "../../../../mixins.scss" as mixin;
 
 .login {
   background-image: url("../../../../assets/images/bg_main.png");
@@ -28,8 +29,7 @@
       display: contents;
 
       > button {
-        background: #b9e2e6;
-        color: #373737;
+        @include mixin.primary-active-button;
         width: 20rem;
       }
     }
@@ -58,7 +58,7 @@
       }
     }
 
-    @media (min-width: bps.$lg) {
+    @include mixin.for-laptop-up {
       > h1 {
         font-size: 1.5em;
         margin-bottom: 0.83em;
@@ -66,6 +66,7 @@
     }
   }
 }
+
 ::ng-deep .mat-error {
   align-items: center;
   display: flex !important;

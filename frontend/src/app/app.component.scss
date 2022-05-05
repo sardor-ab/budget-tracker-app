@@ -1,11 +1,17 @@
+@use "../mixins.scss" as mixin;
+
 .sidenav {
   &__aside {
-    min-width: 30rem;
+    min-width: 35rem;
     z-index: 9999;
 
     &-content {
       height: calc(100% - 4rem);
       padding: 2rem;
+    }
+
+    @include mixin.for-tablet-down {
+      min-width: 100%;
     }
   }
 }
