@@ -5,10 +5,10 @@ import User from "../models/userModel.js";
 //@description Provide all accounts based on user
 //@route GET /api/accounts
 //@access PRIVATE
-const getAll = asyncHandler(async (req, res) => {
+const getUserAccounts = asyncHandler(async (req, res) => {
   const accounts = await Account.find({ user: req.user });
 
-  if (accounts) {
+  if (accounts.length != 0) {
     res.json({
       success: true,
       data: accounts,
@@ -128,4 +128,10 @@ const deleteAccount = asyncHandler(async (req, res) => {
   });
 });
 
-export { getAll, getAccount, createAccount, updateAccount, deleteAccount };
+export {
+  getUserAccounts,
+  getAccount,
+  createAccount,
+  updateAccount,
+  deleteAccount,
+};

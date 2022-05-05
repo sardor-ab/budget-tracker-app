@@ -9,6 +9,11 @@ import { SpinnerComponent } from './spinner/spinner.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from '../config/interceptors/auth.interceptor';
 import { DialogComponent } from './dialog/dialog.component';
+import { ActionsComponent } from './actions/actions.component';
+import { TransactionsComponent } from './transactions/transactions.component';
+import { AccountsComponent } from './accounts/accounts.component';
+import { AccountComponent } from './accounts/account/account.component';
+import { SidenavComponent } from './sidenav/sidenav.component';
 
 @NgModule({
   declarations: [
@@ -16,9 +21,14 @@ import { DialogComponent } from './dialog/dialog.component';
     DashboardComponent,
     SpinnerComponent,
     DialogComponent,
+    ActionsComponent,
+    TransactionsComponent,
+    AccountsComponent,
+    AccountComponent,
+    SidenavComponent,
   ],
   imports: [CommonModule, SharedModule, LoginModule, RegistrationModule],
-  exports: [HeaderComponent, SpinnerComponent],
+  exports: [HeaderComponent, SpinnerComponent, SidenavComponent],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,

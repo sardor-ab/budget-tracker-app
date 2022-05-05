@@ -1,5 +1,20 @@
-<mat-sidenav-container class="sidenav">
-  <mat-sidenav-content class="sidenave__content">
+<mat-sidenav-container
+  class="sidenav"
+  (backdropClick)="closeSideNav()"
+  [ngClass]="isSidenavVisible ? 'scroll-off' : ''"
+>
+  <mat-sidenav
+    position="end"
+    mode="over"
+    #aside
+    [opened]="isSidenavVisible"
+    class="sidenav__aside"
+  >
+    <div class="sidenav__aside-content">
+      <app-sidenav></app-sidenav>
+    </div>
+  </mat-sidenav>
+  <mat-sidenav-content class="sidenav__content">
     <app-spinner *ngIf="isSpinnerVisible"></app-spinner>
     <app-header
       [isUserLoggedIn]="isUserLoggedIn"

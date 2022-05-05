@@ -10,7 +10,12 @@ export class HeaderComponent implements OnInit {
   @Input() isUserLoggedIn!: boolean;
   @Output() logout: EventEmitter<void> = new EventEmitter<void>();
   isMenuOpened: boolean = false;
-  isCurrentUserAdmin: boolean = true;
+  isCurrentUserAdmin: boolean = false;
+  lToken!: {
+    name: string;
+    role: string;
+    exp: string;
+  };
 
   constructor(private router: Router) {}
 
@@ -27,7 +32,34 @@ export class HeaderComponent implements OnInit {
   }
 
   public isUserAdmin(): boolean {
+    this.isCurrentUserAdmin = this.getUserData('role') === 'ADMIN' && true;
     return this.isCurrentUserAdmin;
+  }
+
+  get decodedToken(): { name: string; role: string; exp: string } {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+
+      return tokenPayload;
+    }
+    return { name: '', role: '', exp: '0' };
+  }
+
+  getUserName(): string {
+    this.lToken = this.decodedToken;
+
+    return this.lToken.name;
+  }
+
+  getUserData(data: string): string {
+    this.lToken = this.decodedToken;
+
+    if (data === 'role' || data === 'name') {
+      return this.lToken[data];
+    }
+
+    return 'N/A';
   }
 
   public toggleMenu(): void {

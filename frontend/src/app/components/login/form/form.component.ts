@@ -8,7 +8,6 @@ import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ErrorService } from 'src/app/config/services/error.service';
 import { SpinnerService } from '../../spinner/services/spinner.service';
-import { delay } from 'rxjs/operators';
 
 @Component({
   selector: 'app-form',
@@ -46,6 +45,7 @@ export class FormComponent implements OnInit {
 
   ngOnInit(): void {
     this.invalidCredentials = false;
+    this.errorService.hideErrorText();
 
     this.subscription = this.errorService
       .getisInvalidCredentialsVisibleState$()

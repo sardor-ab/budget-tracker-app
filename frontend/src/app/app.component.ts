@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { LoginService } from './components/login/services/login.service';
+import { SidenavService } from './components/sidenav/services/sidenav.service';
 import { SpinnerService } from './components/spinner/services/spinner.service';
 
 @Component({
@@ -13,10 +14,12 @@ export class AppComponent implements OnInit {
   constructor(
     private loginService: LoginService,
     private router: Router,
-    private spinnerService: SpinnerService
+    private spinnerService: SpinnerService,
+    private sidenavService: SidenavService
   ) {}
   title = 'frontend';
   isSpinnerVisible: boolean = false;
+  isSidenavVisible: boolean = false;
   subscription: Subscription = new Subscription();
 
   ngOnInit(): void {
@@ -25,6 +28,12 @@ export class AppComponent implements OnInit {
       .subscribe((result) => {
         this.isSpinnerVisible = result;
       });
+
+    this.subscription = this.sidenavService
+      .getSideNavState$()
+      .subscribe((state) => {
+        this.isSidenavVisible = state;
+      });
   }
 
   logout() {
@@ -32,11 +41,15 @@ export class AppComponent implements OnInit {
     this.router.navigateByUrl('/login');
   }
 
+  onDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
   get isUserLoggedIn(): boolean {
     return this.loginService.isUserLoggedIn();
   }
 
-  onDestroy(): void {
-    this.subscription.unsubscribe();
+  closeSideNav() {
+    this.sidenavService.hideSideNav();
   }
 }

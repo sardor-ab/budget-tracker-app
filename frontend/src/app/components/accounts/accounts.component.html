@@ -1,0 +1,5 @@
+<div class="acoounts">
+  <app-account *ngIf="!noAccounts && accounts" [accounts]="accounts">
+  </app-account>
+  <ng-container *ngIf="noAccounts">No accounts</ng-container>
+</div>

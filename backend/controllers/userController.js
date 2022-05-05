@@ -19,7 +19,6 @@ const authUser = asyncHandler(async (req, res) => {
     const payload = {
       id: user.id,
       name: user.name,
-      email: user.email,
       role: user.role,
     };
 
@@ -62,7 +61,12 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (user) {
-    const token = generateToken({ user });
+    const payload = {
+      id: user.id,
+      name: user.name,
+      role: user.role,
+    };
+    const token = generateToken(payload);
 
     return res.status(201).json({
       success: true,

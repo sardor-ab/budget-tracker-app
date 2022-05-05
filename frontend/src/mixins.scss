@@ -1,0 +1,25 @@
+@use "./breakpoints.scss" as bps;
+
+@mixin for-tablet-down {
+  @media (max-width: bps.$md) {
+    @content;
+  }
+}
+
+@mixin for-tablet-up {
+  @media (min-width: bps.$md) {
+    @content;
+  }
+}
+
+@mixin for-laptop-down {
+  @media (max-width: bps.$lg) {
+    @content;
+  }
+}
+
+@mixin for-laptop-up {
+  @media (min-width: bps.$lg) {
+    @content;
+  }
+}

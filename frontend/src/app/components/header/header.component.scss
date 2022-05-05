@@ -1,4 +1,5 @@
-@use "../../../breakpoints.scss" as bps;
+@use "../../../mixins.scss" as mixin;
+
 .header {
   max-height: 6.5em;
 
@@ -54,7 +55,7 @@
         }
       }
 
-      @media (min-width: bps.$lg) {
+      @include mixin.for-laptop-up {
         transform: none;
         flex-direction: row;
         background: transparent;
@@ -68,9 +69,13 @@
       width: 15%;
       text-align: end;
 
-      @media (max-width: bps.$lg) {
+      @include mixin.for-tablet-down {
         display: none;
       }
+
+      // @media (max-width: bps.$md) {
+      //   display: none;
+      // }
     }
 
     &-toggle {
@@ -81,9 +86,13 @@
       position: relative;
       z-index: 9999;
 
-      @media (min-width: bps.$lg) {
+      @include mixin.for-laptop-up {
         display: none;
       }
+
+      // @media (min-width: bps.$lg) {
+      //   display: none;
+      // }
     }
   }
 }

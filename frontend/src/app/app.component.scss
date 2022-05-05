@@ -1,0 +1,11 @@
+.sidenav {
+  &__aside {
+    min-width: 30rem;
+    z-index: 9999;
+
+    &-content {
+      height: calc(100% - 4rem);
+      padding: 2rem;
+    }
+  }
+}

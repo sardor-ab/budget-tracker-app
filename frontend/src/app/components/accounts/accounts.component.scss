@@ -1,0 +1,12 @@
+@use "../../../mixins.scss" as mixin;
+
+.acoounts {
+  height: 50%;
+  padding-right: 10%;
+  overflow-y: scroll;
+
+  @include mixin.for-tablet-down {
+    height: 100%;
+    padding-right: 0;
+  }
+}

@@ -37,8 +37,9 @@ export class DialogService {
 
     dialogRef.afterClosed().subscribe((data) => {
       console.log(data);
+      this.openDialog$.next(false);
     });
-    this.openDialog$.next(true);
+    // this.openDialog$.next(true);
   }
 
   hideDialog() {

@@ -5,7 +5,7 @@ import {
   createAccount,
   deleteAccount,
   getAccount,
-  getAll,
+  getUserAccounts,
   updateAccount,
 } from "../controllers/accountController.js";
 
@@ -17,8 +17,8 @@ router.use(auth);
 
 router.delete("/delete/:id", deleteAccount);
 
-router.get("/accounts", getAll);
-router.get("/accounts/:id", getAccount);
+router.get("/", getUserAccounts);
+router.get("/:id", getAccount);
 
 router.put("/update/:id", updateAccount);
 
