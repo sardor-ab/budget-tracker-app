@@ -13,6 +13,7 @@
       >
       <mat-icon
         class="aside__content-header-icons-icon delete"
+        (click)="deleteAccount(responce?.title!)"
         *ngIf="!isTransactionEdit && !isAccountEdit"
         >delete</mat-icon
       >

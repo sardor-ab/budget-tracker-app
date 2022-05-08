@@ -114,6 +114,7 @@ const updateAccount = asyncHandler(async (req, res) => {
 //@route DELETE api/accounts/:id
 //@access PRIVATE
 const deleteAccount = asyncHandler(async (req, res) => {
+  console.log("first");
   const account = await Account.findOne({ _id: req.params.id, user: req.user });
 
   if (!account) {
@@ -121,7 +122,7 @@ const deleteAccount = asyncHandler(async (req, res) => {
     throw new Error("Account not found");
   }
 
-  await card.remove();
+  await account.remove();
 
   res.status(200).json({
     success: true,

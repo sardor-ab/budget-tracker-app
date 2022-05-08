@@ -34,6 +34,12 @@ export class AccountsService {
     );
   }
 
+  deleteAccount(id: string) {
+    return this.httpClient.delete<AccountsResponce>(
+      `${environment.api}accounts/delete/${id}`
+    );
+  }
+
   shouldUpdate$() {
     return this.isUpdated$.asObservable().pipe(observeOn(asyncScheduler));
   }
