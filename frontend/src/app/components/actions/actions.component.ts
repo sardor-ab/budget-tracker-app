@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { AccountsService } from '../accounts/services/accounts.service';
 import { ActionsService } from './services/actions.service';
 
 @Component({
@@ -8,15 +9,30 @@ import { ActionsService } from './services/actions.service';
   styleUrls: ['./actions.component.scss'],
 })
 export class ActionsComponent implements OnInit {
-  constructor(private actionsService: ActionsService) {}
+  constructor(
+    private actionsService: ActionsService,
+    private accountsService: AccountsService
+  ) {}
   noAccounts: boolean = true;
   subscription: Subscription = new Subscription();
 
   ngOnInit(): void {
+    this.updateAccessState();
+    this.subscription = this.accountsService
+      .shouldUpdate$()
+      .subscribe((state) => {
+        if (state) {
+          this.updateAccessState();
+        }
+      });
+  }
+
+  updateAccessState() {
     this.subscription = this.actionsService.noAccounts().subscribe((result) => {
       if (result) {
-        console.log(result);
-        this.noAccounts = false;
+        this.noAccounts = !result.success;
+      } else {
+        this.noAccounts = true;
       }
     });
   }
@@ -28,4 +44,8 @@ export class ActionsComponent implements OnInit {
   onAddTransaction = (): void => {
     this.actionsService.addingNew('Transaction');
   };
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
 }

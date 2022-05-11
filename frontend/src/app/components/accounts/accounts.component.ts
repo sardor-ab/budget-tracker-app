@@ -32,6 +32,7 @@ export class AccountsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadAccounts();
     this.subscription = this.accountsService
       .shouldUpdate$()
       .subscribe((state) => {
