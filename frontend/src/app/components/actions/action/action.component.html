@@ -1,7 +1,7 @@
 <div
   class="action"
-  [ngClass]="canUseTransaction ? 'active' : ''"
-  (click)="canUseTransaction && action()"
+  [ngClass]="canUse ? 'active' : ''"
+  (click)="canUse && action()"
 >
   <mat-icon class="action__icon">add</mat-icon>
   <span class="action__label">
