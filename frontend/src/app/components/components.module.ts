@@ -14,6 +14,7 @@ import { TransactionsComponent } from './transactions/transactions.component';
 import { AccountsComponent } from './accounts/accounts.component';
 import { AccountComponent } from './accounts/account/account.component';
 import { SidenavComponent } from './sidenav/sidenav.component';
+import { ActionComponent } from './actions/action/action.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { SidenavComponent } from './sidenav/sidenav.component';
     AccountsComponent,
     AccountComponent,
     SidenavComponent,
+    ActionComponent,
   ],
   imports: [CommonModule, SharedModule, LoginModule, RegistrationModule],
   exports: [HeaderComponent, SpinnerComponent, SidenavComponent],

@@ -1,9 +1,64 @@
 <h1 mat-dialog-title>{{ title }}</h1>
 
-<div mat-dialog-content>
+<div mat-dialog-content *ngIf="notification">
   {{ message }}
 </div>
 
+<form [formGroup]="accountForm" mat-dialog-content *ngIf="creatingAccount">
+  <mat-form-field class="account-form__row" appearance="outline">
+    <mat-label>Title</mat-label>
+    <input matInput placeholder="J.P. Morgan" formControlName="title" />
+    <mat-error *ngIf="accountTitle?.errors?.['required']">
+      Title for an account is <strong>required</strong>
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="account-form__row" appearance="outline">
+    <mat-label>Currency</mat-label>
+    <mat-select formControlName="currency">
+      <mat-option
+        *ngFor="let currency of availableCurrencies"
+        [value]="currency.value"
+      >
+        {{ currency.viewValue }}
+      </mat-option>
+    </mat-select>
+    <mat-error *ngIf="accountCurrency?.errors?.['required']">
+      Currency for an account is <strong>required</strong>
+    </mat-error>
+  </mat-form-field>
+
+  <!-- <mat-form-field class="account-form__row" appearance="outline">
+    <mat-label>Type</mat-label>
+    <mat-select formControlName="type">
+      <mat-option value="Debit"> Debit </mat-option>
+      <mat-option value="Credit"> Credit </mat-option>
+    </mat-select>
+
+    <mat-error *ngIf="accountType?.errors?.['required']">
+      Type for an account is <strong>required</strong>
+    </mat-error>
+  </mat-form-field> -->
+
+  <mat-form-field class="account-form__row" appearance="outline">
+    <mat-label>Description</mat-label>
+    <textarea
+      formControlName="description"
+      matInput
+      placeholder="Leave a comment"
+    ></textarea>
+  </mat-form-field>
+</form>
+
 <div mat-dialog-actions>
-  <button mat-button mat-dialog-close="close">Ok</button>
+  <button mat-button mat-dialog-close="close">Close</button>
+  <button
+    mat-button
+    mat-dialog-close="success"
+    *ngIf="!notification"
+    [disabled]="accountForm.invalid"
+    (click)="onCreate()"
+  >
+    Create
+  </button>
 </div>

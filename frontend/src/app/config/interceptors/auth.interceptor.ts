@@ -11,6 +11,7 @@ import { LoginService } from 'src/app/components/login/services/login.service';
 import { Router } from '@angular/router';
 import { ErrorService } from '../services/error.service';
 import { SpinnerService } from 'src/app/components/spinner/services/spinner.service';
+import { AccountsService } from '../../components/accounts/services/accounts.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -18,7 +19,8 @@ export class AuthInterceptor implements HttpInterceptor {
     private loginService: LoginService,
     private router: Router,
     private errorService: ErrorService,
-    private spinnerService: SpinnerService
+    private spinnerService: SpinnerService,
+    private accountsService: AccountsService
   ) {}
 
   intercept(
@@ -36,12 +38,11 @@ export class AuthInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
         this.errorService.provideError(error.error?.message);
-        this.errorService.showErrorText();
 
-        if (error.status === 401) {
-          this.loginService.logout();
-          this.router.navigate(['login']);
-        }
+        this.errorService.showErrorText();
+        this.loginService.logout();
+        this.router.navigate(['login']);
+
         this.spinnerService.hideSpinner();
         return throwError(() => error);
       })

@@ -21,14 +21,17 @@ export class AccountsComponent implements OnInit {
     this.subscription = this.accountsService
       .getUserAccounts()
       .subscribe((data) => {
-        this.accountsResponce = data;
-        this.noAccounts = !this.accountsResponce.success;
-        this.accounts = this.accountsResponce.data;
+        if (data) {
+          this.accountsResponce = data;
+          this.noAccounts = !this.accountsResponce.success;
+          this.accounts = this.accountsResponce.data;
+        } else {
+          this.noAccounts = true;
+        }
       });
   }
 
   ngOnInit(): void {
-    this.loadAccounts();
     this.subscription = this.accountsService
       .shouldUpdate$()
       .subscribe((state) => {

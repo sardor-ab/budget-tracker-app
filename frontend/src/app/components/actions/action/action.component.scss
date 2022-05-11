@@ -1,0 +1,16 @@
+@use "../../../../mixins.scss" as mixins;
+
+.action {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  @include mixins.primary-active-button;
+  opacity: 0.5;
+
+  &.active {
+    opacity: 1;
+  }
+}

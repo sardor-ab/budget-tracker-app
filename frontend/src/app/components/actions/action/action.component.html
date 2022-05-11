@@ -1,0 +1,10 @@
+<div
+  class="action"
+  [ngClass]="canUseTransaction ? 'active' : ''"
+  (click)="canUseTransaction && action()"
+>
+  <mat-icon class="action__icon">add</mat-icon>
+  <span class="action__label">
+    {{ label }}
+  </span>
+</div>

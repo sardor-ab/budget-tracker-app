@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { BehaviorSubject, asyncScheduler, Subject } from 'rxjs';
@@ -12,6 +12,18 @@ export class AccountsService {
   constructor(private httpClient: HttpClient) {}
 
   private isUpdated$: Subject<boolean> = new BehaviorSubject<boolean>(false);
+
+  createAccount(data: {
+    currency: string;
+    title: string;
+    // type: string;
+    description: string;
+  }) {
+    return this.httpClient.post<AccountsResponce>(
+      `${environment.api}accounts/create`,
+      data
+    );
+  }
 
   getUserAccounts() {
     return this.httpClient.get<AccountsResponce>(`${environment.api}accounts/`);

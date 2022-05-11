@@ -6,6 +6,7 @@ export interface AccountsResponce {
     balance: number;
     currency: string;
     type: string;
+    description: string;
   }[];
   message?: string;
 }

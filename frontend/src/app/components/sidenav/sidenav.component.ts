@@ -124,7 +124,7 @@ export class SidenavComponent implements OnInit {
   deleteAccount(title: string) {
     if (title === 'Account') {
       this.onClose();
-      this.accountsService
+      this.subscription = this.accountsService
         .deleteAccount(this.responce.account?._id!)
         .subscribe((result) => {
           if (result.success) {

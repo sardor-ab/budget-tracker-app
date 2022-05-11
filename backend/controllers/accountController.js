@@ -15,10 +15,10 @@ const getUserAccounts = asyncHandler(async (req, res) => {
       message: "At least one account is available",
     });
   } else {
-    res.status(404).json({
+    res.status(204).json({
       success: false,
       data: [],
-      message: "No found accounts!",
+      message: "No available accounts!",
     });
   }
 });
@@ -51,15 +51,16 @@ const getAccount = asyncHandler(async (req, res) => {
 //@route POST api/accounts/create
 //@access PRIVATE
 const createAccount = asyncHandler(async (req, res) => {
-  const { title, currency, type } = req.body;
-  const { user } = req.user;
+  const { title, currency, type, description } = req.body;
+  const user = req.user;
 
   const card = await Account.create({
     user,
     title,
     balance: 0,
     currency,
-    type,
+    type: "Debit",
+    description,
   });
 
   if (!card) {
@@ -79,7 +80,7 @@ const createAccount = asyncHandler(async (req, res) => {
 //@route PUT api/accounts/update/:id
 //@access PRIVATE
 const updateAccount = asyncHandler(async (req, res) => {
-  const { title, currency, balance, type } = req.body;
+  const { title, currency, balance, type, description } = req.body;
 
   Account.findByIdAndUpdate(
     req.params.id,
@@ -89,6 +90,7 @@ const updateAccount = asyncHandler(async (req, res) => {
         currency,
         balance,
         type,
+        description,
       },
     },
     { new: true },
@@ -103,6 +105,7 @@ const updateAccount = asyncHandler(async (req, res) => {
             currency,
             balance,
             type,
+            description,
           },
         });
       }
@@ -114,7 +117,6 @@ const updateAccount = asyncHandler(async (req, res) => {
 //@route DELETE api/accounts/:id
 //@access PRIVATE
 const deleteAccount = asyncHandler(async (req, res) => {
-  console.log("first");
   const account = await Account.findOne({ _id: req.params.id, user: req.user });
 
   if (!account) {

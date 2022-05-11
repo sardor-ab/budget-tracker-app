@@ -1,1 +1,15 @@
-<p>actions works!</p>
+<div class="actions">
+  <div class="actions__upper">
+    <app-action
+      [label]="'Add a Transaction'"
+      [canUseTransaction]="noAccounts"
+      [action]="onAddTransaction"
+    ></app-action>
+    <app-action
+      [label]="'Add a Card'"
+      [canUseTransaction]="true"
+      [action]="onAddAccount"
+    ></app-action>
+  </div>
+  <div class="actions__lower"></div>
+</div>

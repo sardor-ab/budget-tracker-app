@@ -48,7 +48,7 @@ export class RegisterFormComponent implements OnInit {
         if (state) {
           this.errorText = this.errorService.getErrorText();
           this.dialogService.provideMessage(this.errorText);
-          this.dialogService.showDialog('Error');
+          this.dialogService.showDialog('Error', 'Notification');
         }
       });
   }
