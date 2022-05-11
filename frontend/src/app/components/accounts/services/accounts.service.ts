@@ -5,17 +5,23 @@ import { BehaviorSubject, asyncScheduler, Subject } from 'rxjs';
 import { observeOn } from 'rxjs/operators';
 import { AccountsResponce } from '../models/accountsResponceModel';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { SpinnerService } from '../../spinner/services/spinner.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AccountsService {
-  constructor(private httpClient: HttpClient, private _snackBar: MatSnackBar) {}
+  constructor(
+    private httpClient: HttpClient,
+    private _snackBar: MatSnackBar,
+    private spinnerService: SpinnerService
+  ) {}
 
   private isUpdated$: Subject<boolean> = new BehaviorSubject<boolean>(false);
 
   openSnackBar(message: string, action: string) {
     this._snackBar.open(message, action, { duration: 5000 });
+    this.spinnerService.hideSpinner();
   }
 
   createAccount(data: {
@@ -31,6 +37,7 @@ export class AccountsService {
   }
 
   getUserAccounts() {
+    this.spinnerService.showSpinner();
     return this.httpClient.get<AccountsResponce>(`${environment.api}accounts/`);
   }
 
@@ -45,6 +52,7 @@ export class AccountsService {
     },
     id: string
   ) {
+    this.spinnerService.showSpinner();
     return this.httpClient
       .put<AccountsResponce>(`${environment.api}accounts/update/${id}`, data)
       .subscribe((result) => {
@@ -56,6 +64,7 @@ export class AccountsService {
   }
 
   deleteAccount(id: string) {
+    this.spinnerService.showSpinner();
     return this.httpClient
       .delete<AccountsResponce>(`${environment.api}accounts/delete/${id}`)
       .subscribe((result) => {

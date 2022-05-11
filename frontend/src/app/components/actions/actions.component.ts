@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AccountsService } from '../accounts/services/accounts.service';
+import { SpinnerService } from '../spinner/services/spinner.service';
 import { ActionsService } from './services/actions.service';
 
 @Component({
@@ -11,7 +12,8 @@ import { ActionsService } from './services/actions.service';
 export class ActionsComponent implements OnInit {
   constructor(
     private actionsService: ActionsService,
-    private accountsService: AccountsService
+    private accountsService: AccountsService,
+    private spinnerService: SpinnerService
   ) {}
   noAccounts: boolean = true;
   subscription: Subscription = new Subscription();
@@ -34,6 +36,7 @@ export class ActionsComponent implements OnInit {
       } else {
         this.noAccounts = true;
       }
+      this.spinnerService.hideSpinner();
     });
   }
 
