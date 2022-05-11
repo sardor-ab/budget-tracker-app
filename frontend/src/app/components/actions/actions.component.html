@@ -2,7 +2,7 @@
   <div class="actions__upper">
     <app-action
       [label]="'Add a Transaction'"
-      [canUse]="noAccounts"
+      [canUse]="!noAccounts"
       [action]="onAddTransaction"
     ></app-action>
     <app-action

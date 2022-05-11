@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
 import { AccountsService } from '../accounts/services/accounts.service';
 import { SidenavService } from './services/sidenav.service';
@@ -13,8 +12,7 @@ import { SidenavService } from './services/sidenav.service';
 export class SidenavComponent implements OnInit {
   constructor(
     private sidenavService: SidenavService,
-    private accountsService: AccountsService,
-    private _snackBar: MatSnackBar
+    private accountsService: AccountsService
   ) {}
   subscription: Subscription = new Subscription();
   isTransaction: boolean = false;
@@ -47,10 +45,6 @@ export class SidenavComponent implements OnInit {
 
   get description() {
     return this.accountForm.get('description');
-  }
-
-  openSnackBar(message: string, action: string) {
-    this._snackBar.open(message, action, { duration: 5000 });
   }
 
   ngOnInit(): void {
@@ -100,14 +94,11 @@ export class SidenavComponent implements OnInit {
     this.accountForm.get('balance')?.setValue(this.responce.account?.balance);
     this.accountForm.get('type')?.setValue(this.responce.account?.type);
 
-    this.subscription = this.accountsService
-      .editAccount(this.accountForm.value, this.responce.account?._id!)
-      .subscribe((result) => {
-        if (result.success) {
-          this.openSnackBar('Account changed successfully!', 'Done');
-          this.accountsService.requestUpdate();
-        }
-      });
+    this.accountsService.editAccount(
+      this.accountForm.value,
+      this.responce.account?._id!
+    );
+
     this.onClose();
   }
 
@@ -124,14 +115,7 @@ export class SidenavComponent implements OnInit {
   deleteAccount(title: string) {
     if (title === 'Account') {
       this.onClose();
-      this.subscription = this.accountsService
-        .deleteAccount(this.responce.account?._id!)
-        .subscribe((result) => {
-          if (result.success) {
-            this.openSnackBar('Account successfully deleted!', 'Done');
-            this.accountsService.requestUpdate();
-          }
-        });
+      this.accountsService.deleteAccount(this.responce.account?._id!);
     }
   }
 }

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { ActionsService } from './services/actions.service';
 
 @Component({
@@ -9,9 +10,15 @@ import { ActionsService } from './services/actions.service';
 export class ActionsComponent implements OnInit {
   constructor(private actionsService: ActionsService) {}
   noAccounts: boolean = true;
+  subscription: Subscription = new Subscription();
 
   ngOnInit(): void {
-    this.noAccounts = this.actionsService.noAccounts();
+    this.subscription = this.actionsService.noAccounts().subscribe((result) => {
+      if (result) {
+        console.log(result);
+        this.noAccounts = false;
+      }
+    });
   }
 
   onAddAccount = (): void => {
