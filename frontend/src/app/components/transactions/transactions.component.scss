@@ -1,0 +1,35 @@
+.transactions {
+  &__filters {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    &-type,
+    &-date {
+      width: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      & .filter {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        background-color: #eceded;
+        border-radius: 10px;
+        min-width: 25%;
+        padding: 10px;
+
+        &-label {
+          width: 100%;
+          margin: auto;
+          text-align: center;
+        }
+
+        &.selected {
+          background-color: #fff;
+          filter: drop-shadow(5px 10px 20px rgba(0, 0, 0, 0.25));
+        }
+      }
+    }
+  }
+}

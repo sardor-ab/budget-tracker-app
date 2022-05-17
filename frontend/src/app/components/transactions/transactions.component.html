@@ -1,1 +1,27 @@
-<p>transactions works!</p>
+<form class="transactions">
+  <app-search-bar (search)="search_request('works')"></app-search-bar>
+  <div class="transactions__filters">
+    <div class="transactions__filters-type">
+      <div
+        class="filter"
+        *ngFor="let type of types"
+        (click)="type.method()"
+        [ngClass]="type.label === selectedFilterType ? 'selected' : ''"
+      >
+        <mat-icon class="filter-icon">{{ type.icon }}</mat-icon>
+        <span class="filter-label">{{ type.label }}</span>
+      </div>
+    </div>
+    <div class="transactions__filters-date">
+      <div
+        class="filter"
+        *ngFor="let date of dates"
+        (click)="date.method()"
+        [ngClass]="date.label === selectedFilterDate ? 'selected' : ''"
+      >
+        <mat-icon class="filter-icon">{{ date.icon }}</mat-icon>
+        <span class="filter-label">{{ date.label }}</span>
+      </div>
+    </div>
+  </div>
+</form>
