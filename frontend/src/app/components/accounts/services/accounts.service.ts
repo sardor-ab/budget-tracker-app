@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { BehaviorSubject, asyncScheduler, Subject } from 'rxjs';
@@ -18,6 +18,8 @@ export class AccountsService {
   ) {}
 
   private isUpdated$: Subject<boolean> = new BehaviorSubject<boolean>(false);
+  private isIdUpdated$: Subject<boolean> = new BehaviorSubject<boolean>(false);
+  private currentId$: Subject<string> = new BehaviorSubject<string>('');
 
   openSnackBar(message: string, action: string) {
     this._snackBar.open(message, action, { duration: 5000 });
@@ -79,11 +81,32 @@ export class AccountsService {
     return this.isUpdated$.asObservable().pipe(observeOn(asyncScheduler));
   }
 
+  shouldIdUpdate$() {
+    return this.isIdUpdated$.asObservable().pipe(observeOn(asyncScheduler));
+  }
+
   requestUpdate() {
     this.isUpdated$.next(true);
   }
 
   declineUpdate() {
     this.isUpdated$.next(false);
+  }
+
+  idUpdate() {
+    this.isIdUpdated$.next(true);
+  }
+
+  completeIdUpdate() {
+    this.isIdUpdated$.next(false);
+  }
+
+  updateCurrentId(id: string) {
+    this.idUpdate();
+    this.currentId$.next(id);
+  }
+
+  getCurrentID$() {
+    return this.currentId$.asObservable().pipe(observeOn(asyncScheduler));
   }
 }

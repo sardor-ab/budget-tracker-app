@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { SidenavService } from '../../sidenav/services/sidenav.service';
 import { AccountsResponce } from '../models/accountsResponceModel';
+import { AccountsService } from '../services/accounts.service';
 
 @Component({
   selector: 'app-account',
@@ -8,11 +9,18 @@ import { AccountsResponce } from '../models/accountsResponceModel';
   styleUrls: ['./account.component.scss'],
 })
 export class AccountComponent implements OnInit {
-  constructor(private sidenavService: SidenavService) {}
+  constructor(
+    private sidenavService: SidenavService,
+    private accountsService: AccountsService
+  ) {}
   @Input() accounts!: AccountsResponce['data'];
   active: number = 0;
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.accounts) {
+      this.accountsService.updateCurrentId(this.accounts[0]._id);
+    }
+  }
 
   onEditAccountButtonClicked(account: any) {
     const data = {
@@ -24,7 +32,8 @@ export class AccountComponent implements OnInit {
     this.sidenavService.showSideNav();
   }
 
-  setActive(index: number) {
+  setActive(index: number, id: string) {
     this.active = index;
+    this.accountsService.updateCurrentId(id);
   }
 }

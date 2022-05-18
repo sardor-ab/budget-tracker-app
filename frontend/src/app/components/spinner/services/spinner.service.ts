@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, asyncScheduler, Subject } from 'rxjs';
 import { observeOn } from 'rxjs/operators';
-import { delay } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',

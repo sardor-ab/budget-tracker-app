@@ -1,4 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { TransactionService } from './services/transaction.service';
 
 @Component({
   selector: 'app-transactions',
@@ -9,6 +11,11 @@ export class TransactionsComponent implements OnInit {
   @Input() type!: string;
   selectedFilterType: string = 'all';
   selectedFilterDate: string = 'latest';
+  currentID: string = '';
+
+  subscription: Subscription = new Subscription();
+
+  transactions!: ITransaction;
 
   search_request(request: string) {
     console.log(request);
@@ -52,7 +59,44 @@ export class TransactionsComponent implements OnInit {
     }
   }
 
-  constructor() {}
+  constructor(private transactionService: TransactionService) {}
 
-  ngOnInit(): void {}
+  fillTransactions() {
+    this.transactionService.getTransactions().subscribe((result) => {
+      if (result !== null && result.success) {
+        this.transactions = result.data;
+      }
+    });
+  }
+
+  ngOnInit(): void {
+    this.subscription = this.transactionService
+      .shouldUpdate$()
+      .subscribe((state) => {
+        if (state) {
+          this.fillTransactions();
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
 }
+
+export interface ITransaction {
+  user: string;
+  card: string;
+  title: string;
+  categories: {
+    _id: string;
+    // name: string;
+    // type: string;
+  }[];
+  amount: number;
+  date: Date;
+  description: string;
+  attachment: string;
+  payee: string;
+}
+[];

@@ -7,6 +7,7 @@ export interface AccountsResponce {
     currency: string;
     type: string;
     description: string;
+    _id: string;
   }[];
   message?: string;
 }

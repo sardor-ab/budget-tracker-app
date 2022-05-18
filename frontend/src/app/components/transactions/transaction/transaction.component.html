@@ -1,1 +1,4 @@
-<p>transaction works!</p>
+<ng-container *ngIf="transactions">
+  <div class="transaction"></div>
+</ng-container>
+<ng-container *ngIf="!transactions"> No transactions yet...</ng-container>
