@@ -4,6 +4,7 @@ import express from "express";
 import connectDB from "./configs/db.js";
 import userRoutes from "./routes/userRotes.js";
 import accountRoutes from "./routes/accountRoutes.js";
+import categoryRoutes from "./routes/categoryRoutes.js";
 import transactionRoutes from "./routes/transactionRoutes.js";
 
 dotenv.config();
@@ -23,6 +24,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use("/api/users", userRoutes);
 app.use("/api/accounts", accountRoutes);
+app.use("/api/categories", categoryRoutes);
 app.use("/api/transactions", transactionRoutes);
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));

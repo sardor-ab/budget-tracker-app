@@ -16,7 +16,11 @@ const transactionSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    categories: [{}],
+    categories: [
+      {
+        // Should Add ref
+      },
+    ],
     amount: {
       type: Number,
       required: true,

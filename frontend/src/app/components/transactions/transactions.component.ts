@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { SpinnerService } from '../spinner/services/spinner.service';
 import { TransactionService } from './services/transaction.service';
 
 @Component({
@@ -8,6 +9,10 @@ import { TransactionService } from './services/transaction.service';
   styleUrls: ['./transactions.component.scss'],
 })
 export class TransactionsComponent implements OnInit {
+  constructor(
+    private transactionService: TransactionService,
+    private spinnerService: SpinnerService
+  ) {}
   @Input() type!: string;
   selectedFilterType: string = 'all';
   selectedFilterDate: string = 'latest';
@@ -59,14 +64,13 @@ export class TransactionsComponent implements OnInit {
     }
   }
 
-  constructor(private transactionService: TransactionService) {}
-
   fillTransactions() {
     this.transactionService.getTransactions().subscribe((result) => {
       if (result !== null && result.success) {
         this.transactions = result.data;
       }
     });
+    this.spinnerService.hideSpinner();
   }
 
   ngOnInit(): void {

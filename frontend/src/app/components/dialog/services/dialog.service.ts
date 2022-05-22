@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { BehaviorSubject, asyncScheduler, Subject } from 'rxjs';
 import { observeOn } from 'rxjs/operators';
 import { AccountsService } from '../../accounts/services/accounts.service';
+import { TransactionService } from '../../transactions/services/transaction.service';
 import { DialogComponent } from '../dialog.component';
 
 @Injectable({
@@ -14,13 +15,21 @@ export class DialogService {
   constructor(
     private dialog: MatDialog,
     private accountsService: AccountsService,
+    private transactionService: TransactionService,
     private _snackBar: MatSnackBar
-  ) {}
+  ) {
+    this.subscription = this.accountsService
+      .getCurrentID$()
+      .subscribe((id: string) => {
+        this.cardID = id;
+      });
+  }
 
   private openDialog$: Subject<boolean> = new BehaviorSubject<boolean>(false);
   private dialogMessage = new BehaviorSubject<string>('');
   public showMessage = this.dialogMessage.asObservable();
   subscription: Subscription = new Subscription();
+  cardID: string = '';
 
   provideMessage(message: string) {
     this.dialogMessage.next(message);
@@ -69,6 +78,21 @@ export class DialogService {
         }
       });
   }
+
+  createTransaction(data: Data['transaction']): void {
+    if (data) {
+      data.card = this.cardID;
+    }
+
+    this.subscription = this.transactionService
+      .createTransaction(data!)
+      .subscribe((result) => {
+        if (result.success) {
+          this.transactionService.requestUpdate();
+          this.openSnackBar(result.message!, 'Done');
+        }
+      });
+  }
 }
 
 export interface Data {
@@ -77,5 +101,17 @@ export interface Data {
     currency: string;
     description: string;
     type: string;
+  };
+  transaction?: {
+    user: string;
+    title: string;
+    type: string;
+    categories: [];
+    amount: number;
+    payee: string;
+    date: Date;
+    description: string;
+    card: string;
+    attachment: string;
   };
 }

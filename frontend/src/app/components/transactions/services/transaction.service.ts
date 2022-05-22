@@ -11,6 +11,7 @@ import {
 import { observeOn } from 'rxjs/operators';
 import { AccountsService } from '../../accounts/services/accounts.service';
 import { ITransaction } from '../transactions.component';
+import { SpinnerService } from '../../spinner/services/spinner.service';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +19,8 @@ import { ITransaction } from '../transactions.component';
 export class TransactionService {
   constructor(
     private httpClient: HttpClient,
-    private accountsService: AccountsService
+    private accountsService: AccountsService,
+    private spinnerService: SpinnerService
   ) {
     this.subscription = this.accountsService
       .getCurrentID$()
@@ -47,6 +49,7 @@ export class TransactionService {
   }
 
   getTransactions() {
+    this.spinnerService.showSpinner();
     this.completeUpdate();
     if (this.id) {
       return this.httpClient.get<ITransactionsResModel>(
@@ -68,6 +71,13 @@ export class TransactionService {
         payee: '',
       },
     });
+  }
+
+  createTransaction(data: ITransaction) {
+    return this.httpClient.post<ITransactionsResModel>(
+      `${environment.api}transactions/create`,
+      data
+    );
   }
 }
 

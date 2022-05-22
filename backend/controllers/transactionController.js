@@ -1,8 +1,50 @@
-import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
-
-import User from "../models/userModel.js";
 import Transaction from "../models/transactionModel.js";
+
+//@description Create a new transaction
+//@route POST api/transactions/create
+//@access PRIVATE
+const createTransaction = asyncHandler(async (req, res) => {
+  const {
+    title,
+    type,
+    categories,
+    amount,
+    payee,
+    date,
+    description,
+    card,
+    attachment,
+  } = req.body;
+
+  const user = req.user;
+
+  const transaction = await Transaction.create({
+    user,
+    title,
+    type,
+    categories,
+    amount,
+    payee,
+    date,
+    description,
+    card,
+    attachment,
+  });
+
+  if (!transaction) {
+    return res.status(400).json({
+      success: false,
+      message: "Transaction cannot be added!",
+    });
+  }
+
+  return res.json({
+    success: true,
+    message: "Transaction added",
+    data: [],
+  });
+});
 
 //@description Get user's all transactions
 //@route GET api/transactions/:id
@@ -12,7 +54,7 @@ const getUserTransactions = asyncHandler(async (req, res) => {
     user: req.user,
     card: req.params.id,
   });
-
+  //Think about this!
   if (transactions.length != 0) {
     res.json({
       success: true,
@@ -47,4 +89,4 @@ const deleteTransaction = asyncHandler(async (req, res) => {
   });
 });
 
-export { getUserTransactions, deleteTransaction };
+export { getUserTransactions, deleteTransaction, createTransaction };

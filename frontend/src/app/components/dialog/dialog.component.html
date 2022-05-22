@@ -50,13 +50,97 @@
   </mat-form-field>
 </form>
 
+<form
+  [formGroup]="transactionForm"
+  mat-dialog-content
+  *ngIf="creatingTransaction"
+>
+  <mat-form-field class="transaction-form__row" appearance="outline">
+    <mat-label>Title</mat-label>
+    <input matInput placeholder="Transaction" formControlName="title" />
+    <mat-error *ngIf="transactionTitle?.errors?.['required']">
+      Title for an transaction is <strong> required</strong>
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="transaction-form__row" appearance="outline">
+    <mat-label>Type</mat-label>
+    <mat-select
+      #selectType
+      formControlName="type"
+      name="selectType"
+      (selectionChange)="onTypeChange(selectType.value)"
+    >
+      <mat-option *ngFor="let type of types" [value]="type.value">
+        {{ type.viewValue }}
+      </mat-option>
+    </mat-select>
+    <mat-error *ngIf="transactionType?.errors?.['required']">
+      Type for an transaction is <strong> required</strong>
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="transaction-form__row" appearance="outline">
+    <mat-label>Category</mat-label>
+    <mat-select formControlName="categories" multiple>
+      <mat-option *ngFor="let category of categories" [value]="category.name">
+        {{ category.name }}
+      </mat-option>
+    </mat-select>
+    <mat-error *ngIf="transactionType?.errors?.['required']">
+      Type for an transaction is<strong> required</strong>
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="transaction-form__row" appearance="outline">
+    <mat-label>Choose a date</mat-label>
+    <input
+      matInput
+      [matDatepicker]="picker"
+      [max]="maxDate"
+      formControlName="date"
+      readonly
+    />
+    <mat-hint>MM/DD/YYYY</mat-hint>
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+
+  <mat-form-field
+    class="transaction-form__row"
+    appearance="outline"
+    floatLabel="always"
+  >
+    <mat-label>Amount</mat-label>
+    <input matInput placeholder="0" formControlName="amount" type="number" />
+    <!-- FOR LATER MAKE SO THAT CARD CURRENCY IS USED-->
+    <span matPrefix>$&nbsp;</span>
+
+    <span matSuffix>.00</span>
+    <mat-error *ngIf="transactionAmount?.errors?.['required']">
+      Amount for an transaction is <strong> required</strong>
+    </mat-error>
+    <mat-error *ngIf="transactionAmount?.errors?.['min']">
+      Amount for an transaction must be <strong> more than 0</strong>
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="transaction-form__row" appearance="outline">
+    <mat-label>Payee</mat-label>
+    <input matInput placeholder="John Doe" formControlName="payee" />
+    <mat-error *ngIf="transactionPayee?.errors?.['required']">
+      Provide a <strong> payee</strong>
+    </mat-error>
+  </mat-form-field>
+</form>
+
 <div mat-dialog-actions>
   <button mat-button mat-dialog-close="close">Close</button>
   <button
     mat-button
     mat-dialog-close="success"
     *ngIf="!notification"
-    [disabled]="accountForm.invalid"
+    [disabled]="creatingAccount ? accountForm.invalid : transactionForm.invalid"
     (click)="onCreate()"
   >
     Create
