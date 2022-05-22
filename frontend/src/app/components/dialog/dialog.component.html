@@ -18,9 +18,9 @@
     <mat-select formControlName="currency">
       <mat-option
         *ngFor="let currency of availableCurrencies"
-        [value]="currency.value"
+        [value]="currency.symbol"
       >
-        {{ currency.viewValue }}
+        {{ currency.symbol }}
       </mat-option>
     </mat-select>
     <mat-error *ngIf="accountCurrency?.errors?.['required']">
@@ -114,7 +114,7 @@
     <mat-label>Amount</mat-label>
     <input matInput placeholder="0" formControlName="amount" type="number" />
     <!-- FOR LATER MAKE SO THAT CARD CURRENCY IS USED-->
-    <span matPrefix>$&nbsp;</span>
+    <span matPrefix>{{ currentCurrency }}&nbsp;</span>
 
     <span matSuffix>.00</span>
     <mat-error *ngIf="transactionAmount?.errors?.['required']">

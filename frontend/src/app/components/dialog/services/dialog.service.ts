@@ -93,6 +93,10 @@ export class DialogService {
         }
       });
   }
+
+  setCurrentCurrency() {
+    return this.accountsService.getCurrentCurrency$();
+  }
 }
 
 export interface Data {

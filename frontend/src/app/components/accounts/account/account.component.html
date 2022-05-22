@@ -3,7 +3,7 @@
     class="account"
     *ngFor="let account of accounts; index as i"
     [ngClass]="i === active ? 'active' : ''"
-    (click)="setActive(i, account._id)"
+    (click)="setActive(i, account)"
   >
     <div class="account__content">
       <div class="account__content-right">

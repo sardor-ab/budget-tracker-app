@@ -20,6 +20,7 @@ export class AccountsService {
   private isUpdated$: Subject<boolean> = new BehaviorSubject<boolean>(false);
   private isIdUpdated$: Subject<boolean> = new BehaviorSubject<boolean>(false);
   private currentId$: Subject<string> = new BehaviorSubject<string>('');
+  private currentCurrency$: Subject<string> = new BehaviorSubject<string>('');
 
   openSnackBar(message: string, action: string) {
     this._snackBar.open(message, action, { duration: 5000 });
@@ -108,5 +109,14 @@ export class AccountsService {
 
   getCurrentID$() {
     return this.currentId$.asObservable().pipe(observeOn(asyncScheduler));
+  }
+
+  updateCurrentCurrency(currency: string) {
+    console.log(currency);
+    this.currentCurrency$.next(currency);
+  }
+
+  getCurrentCurrency$() {
+    return this.currentCurrency$.asObservable().pipe(observeOn(asyncScheduler));
   }
 }

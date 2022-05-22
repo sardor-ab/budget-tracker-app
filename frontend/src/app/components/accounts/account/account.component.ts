@@ -19,6 +19,7 @@ export class AccountComponent implements OnInit {
   ngOnInit(): void {
     if (this.accounts) {
       this.accountsService.updateCurrentId(this.accounts[0]._id);
+      this.accountsService.updateCurrentCurrency(this.accounts[0].currency);
     }
   }
 
@@ -32,10 +33,11 @@ export class AccountComponent implements OnInit {
     this.sidenavService.showSideNav();
   }
 
-  setActive(index: number, id: string) {
+  setActive(index: number, account: any) {
     if (this.active !== index) {
       this.active = index;
-      this.accountsService.updateCurrentId(id);
+      this.accountsService.updateCurrentId(account._id);
+      this.accountsService.updateCurrentCurrency(account.currency);
     }
   }
 }

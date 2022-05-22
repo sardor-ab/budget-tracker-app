@@ -1,10 +1,10 @@
 import { Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { CategoryService } from 'src/app/config/services/category/category.service';
 import { DialogService } from './services/dialog.service';
+import { CurrencyService } from 'src/app/config/services/currency/currency.service';
 
 @Component({
   selector: 'app-dialog',
@@ -16,10 +16,16 @@ export class DialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA)
     public data: { title: string; message: string; type: string },
     private dialogService: DialogService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private currencyService: CurrencyService
   ) {
     const currentYear = new Date();
     this.maxDate = new Date(currentYear);
+    this.subscription = this.dialogService
+      .setCurrentCurrency()
+      .subscribe((currency: string) => {
+        this.currentCurrency = currency;
+      });
   }
   maxDate: Date;
 
@@ -35,7 +41,9 @@ export class DialogComponent implements OnInit {
 
   typeSelected: boolean = false;
 
-  availableCurrencies: Currency[] = [{ value: '$', viewValue: '$' }];
+  currentCurrency: string = '';
+
+  availableCurrencies!: Currency[];
   selectedValue: string = '';
 
   types: Type[] = [
@@ -116,6 +124,16 @@ export class DialogComponent implements OnInit {
     return this.accountForm.get('description');
   }
 
+  fillCurrencies() {
+    this.subscription = this.currencyService
+      .getCurrencies()
+      .subscribe((result) => {
+        if (result.success) {
+          this.availableCurrencies = result.data;
+        }
+      });
+  }
+
   // get accountType() {
   //   return this.accountForm.get('type');
   // }
@@ -127,6 +145,7 @@ export class DialogComponent implements OnInit {
       this.creatingTransaction = true;
     } else if (this.data?.type === 'Account') {
       this.creatingAccount = true;
+      this.fillCurrencies();
     } else {
       this.notification = true;
     }
@@ -152,6 +171,7 @@ interface Category {
 }
 
 interface Currency {
-  value: string;
-  viewValue: string;
+  currency: string;
+  abbreviation: string;
+  symbol: string;
 }
