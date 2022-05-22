@@ -10,7 +10,6 @@ import {
 } from 'rxjs';
 import { observeOn } from 'rxjs/operators';
 import { AccountsService } from '../../accounts/services/accounts.service';
-import { ITransaction } from '../transactions.component';
 import { SpinnerService } from '../../spinner/services/spinner.service';
 
 @Injectable({
@@ -51,26 +50,30 @@ export class TransactionService {
   getTransactions() {
     this.spinnerService.showSpinner();
     this.completeUpdate();
-    if (this.id) {
-      return this.httpClient.get<ITransactionsResModel>(
-        `${environment.api}transactions/${this.id}`
-      );
-    }
+    // if (this.id) {
+    //   return this.httpClient.get<ITransactionsResModel>(
+    //     `${environment.api}transactions/${this.id}`
+    //   );
+    // }
 
-    return of<ITransactionsResModel>({
-      success: false,
-      data: {
-        user: '',
-        card: '',
-        title: '',
-        categories: [],
-        amount: 0,
-        date: new Date(),
-        description: '',
-        attachment: '',
-        payee: '',
-      },
-    });
+    return this.httpClient.get<ITransactionsResModel>(
+      `${environment.api}transactions/${this.id}`
+    );
+
+    // return of<ITransactionsResModel>({
+    //   success: false,
+    //   data: {
+    //     user: '',
+    //     card: '',
+    //     title: '',
+    //     categories: [],
+    //     amount: 0,
+    //     date: new Date(),
+    //     description: '',
+    //     attachment: '',
+    //     payee: '',
+    //   },
+    // });
   }
 
   createTransaction(data: ITransaction) {
@@ -84,5 +87,21 @@ export class TransactionService {
 export interface ITransactionsResModel {
   success: boolean;
   message?: string;
-  data: ITransaction;
+  data?: ITransaction[];
+}
+
+export interface ITransaction {
+  user: string;
+  card: string;
+  title: string;
+  categories: {
+    _id: string;
+    // name: string;
+    // type: string;
+  }[];
+  amount: number;
+  date: Date;
+  description: string;
+  attachment: string;
+  payee: string;
 }

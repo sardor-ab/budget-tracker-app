@@ -1,5 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ITransaction } from '../transactions.component';
+import {
+  ITransaction,
+  ITransactionsResModel,
+} from '../services/transaction.service';
 
 @Component({
   selector: 'app-transaction',
@@ -7,7 +10,7 @@ import { ITransaction } from '../transactions.component';
   styleUrls: ['./transaction.component.scss'],
 })
 export class TransactionComponent implements OnInit {
-  @Input() transactions!: ITransaction;
+  @Input() transactions!: ITransactionsResModel['data'];
   constructor() {}
 
   ngOnInit(): void {}

@@ -1,3 +1,5 @@
 <ng-container *ngIf="transactions">
-  <div class="transaction"></div>
+  <div class="transaction" *ngFor="let transaction of transactions">
+    {{ transaction?.title }}
+  </div>
 </ng-container>

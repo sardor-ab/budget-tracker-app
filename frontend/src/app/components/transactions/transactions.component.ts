@@ -1,7 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { SpinnerService } from '../spinner/services/spinner.service';
-import { TransactionService } from './services/transaction.service';
+import {
+  ITransactionsResModel,
+  TransactionService,
+} from './services/transaction.service';
 
 @Component({
   selector: 'app-transactions',
@@ -20,7 +23,7 @@ export class TransactionsComponent implements OnInit {
 
   subscription: Subscription = new Subscription();
 
-  transactions!: ITransaction;
+  transactions!: ITransactionsResModel['data'];
 
   noTransactions: boolean = true;
 
@@ -28,6 +31,7 @@ export class TransactionsComponent implements OnInit {
     console.log(request);
   }
 
+  // STATIC DATA
   types = [
     {
       label: 'income',
@@ -53,7 +57,9 @@ export class TransactionsComponent implements OnInit {
       method: () => this.sortByDate('oldest'),
     },
   ];
+  // !STATIC DATA
 
+  // SORTING
   sortByDate(filter: string) {
     this.selectedFilterDate = filter;
   }
@@ -65,16 +71,19 @@ export class TransactionsComponent implements OnInit {
       this.selectedFilterType = 'all';
     }
   }
+  // !SORTING
 
   fillTransactions() {
-    this.transactionService.getTransactions().subscribe((result) => {
-      if (result !== null && result.success) {
-        this.transactions = result.data;
-        this.noTransactions = false;
-      } else {
-        this.noTransactions = true;
-      }
-    });
+    this.subscription = this.transactionService
+      .getTransactions()
+      .subscribe((result) => {
+        if (result !== null && result.success) {
+          this.transactions = result.data;
+          this.noTransactions = false;
+        } else {
+          this.noTransactions = true;
+        }
+      });
     this.spinnerService.hideSpinner();
   }
 
@@ -92,20 +101,3 @@ export class TransactionsComponent implements OnInit {
     this.subscription.unsubscribe();
   }
 }
-
-export interface ITransaction {
-  user: string;
-  card: string;
-  title: string;
-  categories: {
-    _id: string;
-    // name: string;
-    // type: string;
-  }[];
-  amount: number;
-  date: Date;
-  description: string;
-  attachment: string;
-  payee: string;
-}
-[];

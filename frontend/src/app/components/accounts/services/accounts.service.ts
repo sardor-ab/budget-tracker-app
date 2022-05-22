@@ -112,7 +112,6 @@ export class AccountsService {
   }
 
   updateCurrentCurrency(currency: string) {
-    console.log(currency);
     this.currentCurrency$.next(currency);
   }
 
