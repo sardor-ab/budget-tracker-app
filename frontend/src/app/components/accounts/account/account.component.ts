@@ -33,7 +33,9 @@ export class AccountComponent implements OnInit {
   }
 
   setActive(index: number, id: string) {
-    this.active = index;
-    this.accountsService.updateCurrentId(id);
+    if (this.active !== index) {
+      this.active = index;
+      this.accountsService.updateCurrentId(id);
+    }
   }
 }

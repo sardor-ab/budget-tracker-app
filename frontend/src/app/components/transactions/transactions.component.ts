@@ -22,6 +22,8 @@ export class TransactionsComponent implements OnInit {
 
   transactions!: ITransaction;
 
+  noTransactions: boolean = true;
+
   search_request(request: string) {
     console.log(request);
   }
@@ -68,6 +70,9 @@ export class TransactionsComponent implements OnInit {
     this.transactionService.getTransactions().subscribe((result) => {
       if (result !== null && result.success) {
         this.transactions = result.data;
+        this.noTransactions = false;
+      } else {
+        this.noTransactions = true;
       }
     });
     this.spinnerService.hideSpinner();
