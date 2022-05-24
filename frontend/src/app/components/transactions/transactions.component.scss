@@ -36,5 +36,6 @@
   &__list {
     margin-top: 1rem;
     height: calc(100vh - 20em);
+    overflow-y: scroll;
   }
 }

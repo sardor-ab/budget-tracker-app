@@ -24,6 +24,7 @@ export class AccountsComponent implements OnInit {
         if (data) {
           this.accountsResponce = data;
           this.noAccounts = !this.accountsResponce.success;
+
           this.accounts = this.accountsResponce.data;
         } else {
           this.noAccounts = true;

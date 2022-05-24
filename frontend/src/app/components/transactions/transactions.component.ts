@@ -15,7 +15,18 @@ export class TransactionsComponent implements OnInit {
   constructor(
     private transactionService: TransactionService,
     private spinnerService: SpinnerService
-  ) {}
+  ) {
+    this.subscription = this.transactionService
+      .shouldUpdate$()
+      .subscribe((state) => {
+        if (state) {
+          this.fillTransactions(
+            this.selectedFilterType,
+            this.selectedFilterDate
+          );
+        }
+      });
+  }
   @Input() type!: string;
   selectedFilterType: string = 'all';
   selectedFilterDate: string = 'latest';
@@ -39,9 +50,9 @@ export class TransactionsComponent implements OnInit {
       method: () => this.sortByType('income'),
     },
     {
-      label: 'expence',
+      label: 'expense',
       icon: 'arrow_downward',
-      method: () => this.sortByType('expence'),
+      method: () => this.sortByType('expense'),
     },
   ];
 
@@ -62,6 +73,7 @@ export class TransactionsComponent implements OnInit {
   // SORTING
   sortByDate(filter: string) {
     this.selectedFilterDate = filter;
+    this.fillTransactions(this.selectedFilterType, this.selectedFilterDate);
   }
 
   sortByType(filter: string) {
@@ -70,12 +82,13 @@ export class TransactionsComponent implements OnInit {
     } else {
       this.selectedFilterType = 'all';
     }
+    this.fillTransactions(this.selectedFilterType, this.selectedFilterDate);
   }
   // !SORTING
 
-  fillTransactions() {
+  fillTransactions(filterType: string, filterDate: string) {
     this.subscription = this.transactionService
-      .getTransactions()
+      .getTransactions(filterType, filterDate)
       .subscribe((result) => {
         if (result !== null && result.success) {
           this.transactions = result.data;
@@ -88,13 +101,13 @@ export class TransactionsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.subscription = this.transactionService
-      .shouldUpdate$()
-      .subscribe((state) => {
-        if (state) {
-          this.fillTransactions();
-        }
-      });
+    // this.subscription = this.transactionService
+    //   .shouldUpdate$()
+    //   .subscribe((state) => {
+    //     if (state) {
+    //       this.fillTransactions();
+    //     }
+    //   });
   }
 
   ngOnDestroy(): void {

@@ -1,6 +1,6 @@
 import asyncHandler from "express-async-handler";
 import Account from "../models/accountModel.js";
-import User from "../models/userModel.js";
+import Transaction from "../models/transactionModel.js";
 
 //@description Provide all accounts based on user
 //@route GET /api/accounts

@@ -59,7 +59,7 @@
     <mat-label>Title</mat-label>
     <input matInput placeholder="Transaction" formControlName="title" />
     <mat-error *ngIf="transactionTitle?.errors?.['required']">
-      Title for an transaction is <strong> required</strong>
+      Title for a transaction is <strong> required</strong>
     </mat-error>
   </mat-form-field>
 
@@ -76,7 +76,7 @@
       </mat-option>
     </mat-select>
     <mat-error *ngIf="transactionType?.errors?.['required']">
-      Type for an transaction is <strong> required</strong>
+      Type for a transaction is <strong> required</strong>
     </mat-error>
   </mat-form-field>
 
@@ -88,7 +88,7 @@
       </mat-option>
     </mat-select>
     <mat-error *ngIf="transactionType?.errors?.['required']">
-      Type for an transaction is<strong> required</strong>
+      Provide for a transaction at least<strong> category</strong>
     </mat-error>
   </mat-form-field>
 
@@ -118,7 +118,7 @@
 
     <span matSuffix>.00</span>
     <mat-error *ngIf="transactionAmount?.errors?.['required']">
-      Amount for an transaction is <strong> required</strong>
+      Amount for a transaction is <strong> required</strong>
     </mat-error>
     <mat-error *ngIf="transactionAmount?.errors?.['min']">
       Amount for an transaction must be <strong> more than 0</strong>

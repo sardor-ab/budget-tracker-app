@@ -89,6 +89,7 @@ export class DialogService {
       .subscribe((result) => {
         if (result.success) {
           this.transactionService.requestUpdate();
+          this.accountsService.requestUpdate();
           this.openSnackBar(result.message!, 'Done');
         }
       });

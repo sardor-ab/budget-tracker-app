@@ -1,4 +1,5 @@
 import asyncHandler from "express-async-handler";
+import Account from "../models/accountModel.js";
 import Transaction from "../models/transactionModel.js";
 
 //@description Create a new transaction
@@ -18,6 +19,8 @@ const createTransaction = asyncHandler(async (req, res) => {
   } = req.body;
 
   const user = req.user;
+
+  let balance = 0;
 
   const transaction = await Transaction.create({
     user,
@@ -39,6 +42,34 @@ const createTransaction = asyncHandler(async (req, res) => {
     });
   }
 
+  const transactions = await Transaction.find({
+    user,
+    card,
+  });
+
+  transactions.map((transaction) => {
+    if (transaction.type === "income") {
+      balance += transaction.amount;
+    } else {
+      balance -= transaction.amount;
+    }
+  });
+
+  Account.findByIdAndUpdate(
+    card,
+    {
+      $set: {
+        balance,
+      },
+    },
+    { new: true },
+    function (error, { balance }) {
+      if (error) {
+        return res.send(error);
+      }
+    }
+  );
+
   return res.json({
     success: true,
     message: "Transaction added",
@@ -46,14 +77,31 @@ const createTransaction = asyncHandler(async (req, res) => {
   });
 });
 
-//@description Get user's all transactions
+//@description Get user's all transactions based on card ID
 //@route GET api/transactions/:id
 //@access PRIVATE
 const getUserTransactions = asyncHandler(async (req, res) => {
+  let { type, date } = req.query;
+
+  if (type === "all") {
+    type = ["income", "expense"];
+  } else {
+    type = [type];
+  }
+
   const transactions = await Transaction.find({
     user: req.user,
     card: req.params.id,
+    type: { $in: type },
   });
+
+  transactions.sort((a, b) => {
+    if (date === "oldest") {
+      return a.date - b.date;
+    }
+    return b.date - a.date;
+  });
+
   //Think about this lenght changing!
   if (transactions.length != 0) {
     res.json({

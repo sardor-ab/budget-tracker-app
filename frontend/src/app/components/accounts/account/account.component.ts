@@ -20,6 +20,14 @@ export class AccountComponent implements OnInit {
     if (this.accounts) {
       this.accountsService.updateCurrentId(this.accounts[0]._id);
       this.accountsService.updateCurrentCurrency(this.accounts[0].currency);
+
+      // this.accounts.map((transaction) => {
+      //   this.accountsService
+      //     .getTotalBalance(transaction._id)
+      //     .subscribe((result) => {
+      //       console.log(result);
+      //     });
+      // });
     }
   }
 

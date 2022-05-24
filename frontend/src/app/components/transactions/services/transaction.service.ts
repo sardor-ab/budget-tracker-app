@@ -47,33 +47,13 @@ export class TransactionService {
     this.isUpdated$.next(false);
   }
 
-  getTransactions() {
+  getTransactions(filterType: string, filterDate: string) {
     this.spinnerService.showSpinner();
     this.completeUpdate();
-    // if (this.id) {
-    //   return this.httpClient.get<ITransactionsResModel>(
-    //     `${environment.api}transactions/${this.id}`
-    //   );
-    // }
 
     return this.httpClient.get<ITransactionsResModel>(
-      `${environment.api}transactions/${this.id}`
+      `${environment.api}transactions/${this.id}?type=${filterType}&date=${filterDate}`
     );
-
-    // return of<ITransactionsResModel>({
-    //   success: false,
-    //   data: {
-    //     user: '',
-    //     card: '',
-    //     title: '',
-    //     categories: [],
-    //     amount: 0,
-    //     date: new Date(),
-    //     description: '',
-    //     attachment: '',
-    //     payee: '',
-    //   },
-    // });
   }
 
   createTransaction(data: ITransaction) {
@@ -104,4 +84,5 @@ export interface ITransaction {
   description: string;
   attachment: string;
   payee: string;
+  type: string;
 }
