@@ -24,7 +24,12 @@
       </div>
     </div>
   </div>
-  <ng-container *ngIf="noTransactions"> No transactions yet...</ng-container>
+  <!-- <ng-container class="transactions__empty" *ngIf="noTransactions">
+    No transactions yet...</ng-container
+  > -->
+  <div class="transactions__empty" *ngIf="noTransactions">
+    No transactions yet...
+  </div>
   <div class="transactions__list" *ngIf="!noTransactions">
     <app-transaction [transactions]="transactions"></app-transaction>
   </div>

@@ -33,6 +33,10 @@
     }
   }
 
+  &__empty {
+    margin-top: 1rem;
+  }
+
   &__list {
     margin-top: 1rem;
     height: calc(100vh - 20em);
