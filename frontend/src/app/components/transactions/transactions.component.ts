@@ -37,6 +37,7 @@ export class TransactionsComponent implements OnInit {
   transactions!: ITransactionsResModel['data'];
 
   noTransactions: boolean = true;
+  canUseFilters: boolean = true;
 
   search_request(request: string) {
     console.log(request);
@@ -97,18 +98,21 @@ export class TransactionsComponent implements OnInit {
           this.noTransactions = true;
         }
       });
+    // very dump solution I guess 🥴
+    this.subscription = this.transactionService
+      .getTransactions('all', 'latest')
+      .subscribe((result) => {
+        if (!result) {
+          this.canUseFilters = false;
+        } else {
+          this.canUseFilters = true;
+        }
+      });
+
     this.spinnerService.hideSpinner();
   }
 
-  ngOnInit(): void {
-    // this.subscription = this.transactionService
-    //   .shouldUpdate$()
-    //   .subscribe((state) => {
-    //     if (state) {
-    //       this.fillTransactions();
-    //     }
-    //   });
-  }
+  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();

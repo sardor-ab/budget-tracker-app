@@ -5,7 +5,7 @@
       <div
         class="filter"
         *ngFor="let type of types"
-        (click)="type.method()"
+        (click)="canUseFilters && type.method()"
         [ngClass]="type.label === selectedFilterType ? 'selected' : ''"
       >
         <mat-icon class="filter-icon">{{ type.icon }}</mat-icon>
@@ -16,7 +16,7 @@
       <div
         class="filter"
         *ngFor="let date of dates"
-        (click)="date.method()"
+        (click)="canUseFilters && date.method()"
         [ngClass]="date.label === selectedFilterDate ? 'selected' : ''"
       >
         <mat-icon class="filter-icon">{{ date.icon }}</mat-icon>
@@ -24,9 +24,7 @@
       </div>
     </div>
   </div>
-  <!-- <ng-container class="transactions__empty" *ngIf="noTransactions">
-    No transactions yet...</ng-container
-  > -->
+
   <div class="transactions__empty" *ngIf="noTransactions">
     No transactions yet...
   </div>
