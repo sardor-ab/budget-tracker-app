@@ -2,6 +2,36 @@ import asyncHandler from "express-async-handler";
 import Account from "../models/accountModel.js";
 import Transaction from "../models/transactionModel.js";
 
+const calculateBalance = async (user, card) => {
+  const transactions = await Transaction.find({
+    user,
+    card,
+  });
+  let balance = 0;
+  transactions.map((transaction) => {
+    if (transaction.type === "income") {
+      balance += transaction.amount;
+    } else {
+      balance -= transaction.amount;
+    }
+  });
+
+  Account.findByIdAndUpdate(
+    card,
+    {
+      $set: {
+        balance,
+      },
+    },
+    { new: true },
+    function (error, balance) {
+      if (error) {
+        return res.send(error);
+      }
+    }
+  );
+};
+
 //@description Create a new transaction
 //@route POST api/transactions/create
 //@access PRIVATE
@@ -19,8 +49,6 @@ const createTransaction = asyncHandler(async (req, res) => {
   } = req.body;
 
   const user = req.user;
-
-  let balance = 0;
 
   const transaction = await Transaction.create({
     user,
@@ -42,33 +70,7 @@ const createTransaction = asyncHandler(async (req, res) => {
     });
   }
 
-  const transactions = await Transaction.find({
-    user,
-    card,
-  });
-
-  transactions.map((transaction) => {
-    if (transaction.type === "income") {
-      balance += transaction.amount;
-    } else {
-      balance -= transaction.amount;
-    }
-  });
-
-  Account.findByIdAndUpdate(
-    card,
-    {
-      $set: {
-        balance,
-      },
-    },
-    { new: true },
-    function (error, { balance }) {
-      if (error) {
-        return res.send(error);
-      }
-    }
-  );
+  await calculateBalance(user, card);
 
   return res.json({
     success: true,
@@ -119,17 +121,15 @@ const getUserTransactions = asyncHandler(async (req, res) => {
 });
 
 //@description Delete user's exact transaction
-//@route DELETE api/transactions/transaction/:id
+//@route DELETE api/transactions/delete
 //@access PRIVATE
 const deleteTransaction = asyncHandler(async (req, res) => {
-  const transaction = await Transaction.findById(req.params.id);
+  const { card, transaction } = req.query;
+  const user = req.user;
 
-  if (!transaction) {
-    res.status(404);
-    throw new Error("Transaction not found");
-  }
+  await Transaction.findByIdAndRemove({ _id: transaction });
 
-  await transaction.remove();
+  calculateBalance(user, card);
 
   res.status(200).json({
     success: true,
@@ -137,4 +137,75 @@ const deleteTransaction = asyncHandler(async (req, res) => {
   });
 });
 
-export { getUserTransactions, deleteTransaction, createTransaction };
+//@description Update a transaction data based on id
+//@route PUT api/transactions/update/:id
+//@access PRIVATE
+const updateTransaction = asyncHandler(async (req, res) => {
+  const {
+    title,
+    currency,
+    amount,
+    type,
+    description,
+    categories,
+    payee,
+    date,
+  } = req.body;
+
+  const user = req.user;
+  const { card, transaction } = req.query;
+
+  Transaction.findByIdAndUpdate(
+    transaction,
+    {
+      $set: {
+        title,
+        currency,
+        amount,
+        type,
+        description,
+        categories,
+        payee,
+        date,
+      },
+    },
+    { new: true },
+    function (
+      error,
+      title,
+      currency,
+      amount,
+      type,
+      description,
+      categories,
+      payee,
+      date
+    ) {
+      if (error) {
+        res.send(error);
+      } else {
+        calculateBalance(user, card);
+        res.json({
+          success: true,
+          data: {
+            title,
+            currency,
+            amount,
+            type,
+            description,
+            categories,
+            payee,
+            date,
+          },
+        });
+      }
+    }
+  );
+});
+
+export {
+  getUserTransactions,
+  deleteTransaction,
+  createTransaction,
+  updateTransaction,
+};

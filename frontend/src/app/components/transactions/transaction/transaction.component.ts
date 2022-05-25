@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { SidenavService } from '../../sidenav/services/sidenav.service';
 import {
   ITransaction,
   ITransactionsResModel,
@@ -11,7 +12,17 @@ import {
 })
 export class TransactionComponent implements OnInit {
   @Input() transactions!: ITransactionsResModel['data'];
-  constructor() {}
+  constructor(private sidenavService: SidenavService) {}
 
   ngOnInit(): void {}
+
+  editTransaction(transaction: any) {
+    const data = {
+      title: 'Transaction',
+      transaction: transaction,
+    };
+
+    this.sidenavService.setSidenavData$(data);
+    this.sidenavService.showSideNav();
+  }
 }

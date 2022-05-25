@@ -22,13 +22,29 @@ export class SidenavService {
 
   setSidenavData$(sharedData: {
     title: string;
-    account: {
+    account?: {
       title: string;
       balance: number;
       currency: string;
       description: string;
       type: string;
       _id: string;
+    };
+    transaction?: {
+      user: string;
+      card: string;
+      title: string;
+      categories: {
+        _id: string;
+        // name: string;
+        // type: string;
+      }[];
+      amount: number;
+      date: Date;
+      description: string;
+      attachment: string;
+      payee: string;
+      type: string;
     };
   }) {
     this.data$.next(sharedData);

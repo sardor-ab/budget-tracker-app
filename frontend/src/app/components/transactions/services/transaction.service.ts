@@ -11,6 +11,7 @@ import {
 import { observeOn } from 'rxjs/operators';
 import { AccountsService } from '../../accounts/services/accounts.service';
 import { SpinnerService } from '../../spinner/services/spinner.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +20,8 @@ export class TransactionService {
   constructor(
     private httpClient: HttpClient,
     private accountsService: AccountsService,
-    private spinnerService: SpinnerService
+    private spinnerService: SpinnerService,
+    private _snackBar: MatSnackBar
   ) {
     this.subscription = this.accountsService
       .getCurrentID$()
@@ -30,6 +32,12 @@ export class TransactionService {
         }
       });
   }
+
+  openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action, { duration: 5000 });
+    this.spinnerService.hideSpinner();
+  }
+
   subscription: Subscription = new Subscription();
 
   id: string = '';
@@ -45,6 +53,7 @@ export class TransactionService {
 
   completeUpdate() {
     this.isUpdated$.next(false);
+    this.spinnerService.hideSpinner();
   }
 
   getTransactions(filterType: string, filterDate: string) {
@@ -61,6 +70,37 @@ export class TransactionService {
       `${environment.api}transactions/create`,
       data
     );
+  }
+
+  editTransaction(data: ITransaction, cardID: string, id: string) {
+    this.spinnerService.showSpinner();
+    return this.httpClient
+      .put<ITransactionsResModel>(
+        `${environment.api}transactions/update/?card=${cardID}&transaction=${id}`,
+        data
+      )
+      .subscribe((result) => {
+        if (result.success) {
+          this.openSnackBar('Transaction changed successfully!', 'Done');
+          this.accountsService.requestUpdate();
+          this.requestUpdate();
+        }
+      });
+  }
+
+  deleteTransaction(cardID: string, id: string) {
+    this.spinnerService.showSpinner();
+    return this.httpClient
+      .delete<ITransactionsResModel>(
+        `${environment.api}transactions/delete/?card=${cardID}&transaction=${id}`
+      )
+      .subscribe((result) => {
+        if (result.success) {
+          this.openSnackBar('Transaction deleted successfully!', 'Done');
+          this.accountsService.requestUpdate();
+          this.requestUpdate();
+        }
+      });
   }
 }
 

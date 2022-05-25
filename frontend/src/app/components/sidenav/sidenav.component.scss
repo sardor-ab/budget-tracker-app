@@ -1,6 +1,10 @@
 @use "../../../mixins.scss" as mixin;
+@use "../../../colors.scss" as color;
 
 .aside__content {
+  height: 100%;
+  position: relative;
+
   &-header {
     display: flex;
     justify-content: space-between;
@@ -25,6 +29,68 @@
     margin-top: 2rem;
     //try to remove after font changing line height addition
     &-table {
+      &-upper {
+        display: flex;
+        justify-content: space-between;
+
+        &-type {
+          display: flex;
+          align-items: center;
+          text-transform: capitalize;
+
+          &-icon {
+            color: #fff;
+            background-color: color.$error;
+            border-radius: 25px;
+            margin-right: 4px;
+
+            &.income {
+              transform: rotate(180deg);
+              background-color: color.$success;
+            }
+          }
+        }
+
+        &-amount {
+          font-size: 36px;
+          line-height: 36px;
+          color: color.$error;
+          &::before {
+            content: "-";
+          }
+
+          &.income {
+            color: color.$success;
+            &::before {
+              content: "+";
+            }
+          }
+        }
+      }
+
+      &-title {
+        padding: 1rem 0;
+
+        &-text {
+          font-size: 24px;
+          line-height: 24px;
+        }
+      }
+
+      &-categories {
+        margin: 0.5rem 0;
+        display: flex;
+        flex-wrap: wrap;
+        flex-grow: 2;
+        gap: 10px;
+
+        &-item {
+          padding: 8px;
+          border-radius: 10px;
+          border: 1px solid #000;
+        }
+      }
+
       &-row {
         display: flex;
         padding: 0.5rem 0;
@@ -60,14 +126,34 @@
       &-form {
         display: flex;
         flex-direction: column;
+
+        & .button-group {
+          display: flex;
+          gap: 16px;
+          margin-bottom: 16px;
+
+          &-item {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            opacity: 0.25;
+            padding: 8px;
+            border-radius: 10px;
+            border: 1px solid #000;
+
+            &.active {
+              opacity: 1;
+            }
+          }
+        }
       }
     }
   }
 
   &-footer {
-    margin-top: 100%;
-    display: flex;
-    justify-content: flex-end;
+    position: absolute;
+    right: 0;
+    bottom: 0;
 
     > .btn-save {
       @include mixin.primary-active-button;
