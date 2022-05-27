@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { IUserResponceModel } from 'src/app/models/userResponceModel';
+import { IUserResponceModel } from 'src/app/models/ResponceModels';
 
 @Injectable({
   providedIn: 'root',

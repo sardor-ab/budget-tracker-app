@@ -75,7 +75,7 @@ const createTransaction = asyncHandler(async (req, res) => {
   return res.json({
     success: true,
     message: "Transaction added",
-    data: [],
+    transactions: [],
   });
 });
 
@@ -108,13 +108,13 @@ const getUserTransactions = asyncHandler(async (req, res) => {
   if (transactions.length != 0) {
     res.json({
       success: true,
-      data: transactions,
+      transactions: transactions,
       message: "At least one transaction is available",
     });
   } else {
     res.status(204).json({
       success: true,
-      data: [],
+      transactions: [],
       message: "No available transaction!",
     });
   }
@@ -133,7 +133,8 @@ const deleteTransaction = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     success: true,
-    data: {},
+    message: "Transaction deleted successfully",
+    transactions: [],
   });
 });
 
@@ -187,7 +188,7 @@ const updateTransaction = asyncHandler(async (req, res) => {
         calculateBalance(user, card);
         res.json({
           success: true,
-          data: {
+          transaction: {
             title,
             currency,
             amount,
@@ -197,6 +198,7 @@ const updateTransaction = asyncHandler(async (req, res) => {
             payee,
             date,
           },
+          message: "Transaction updated successfully",
         });
       }
     }

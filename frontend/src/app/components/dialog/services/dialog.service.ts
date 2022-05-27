@@ -5,8 +5,8 @@ import { Subscription } from 'rxjs';
 import { BehaviorSubject, asyncScheduler, Subject } from 'rxjs';
 import { observeOn } from 'rxjs/operators';
 import { AccountsService } from '../../accounts/services/accounts.service';
-import { TransactionService } from '../../transactions/services/transaction.service';
 import { DialogComponent } from '../dialog.component';
+import { TransactionService } from '../../transactions/service/transaction.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,9 +14,9 @@ import { DialogComponent } from '../dialog.component';
 export class DialogService {
   constructor(
     private dialog: MatDialog,
+    private _snackBar: MatSnackBar,
     private accountsService: AccountsService,
-    private transactionService: TransactionService,
-    private _snackBar: MatSnackBar
+    private transactionService: TransactionService
   ) {
     this.subscription = this.accountsService
       .getCurrentID$()
@@ -84,15 +84,8 @@ export class DialogService {
       data.card = this.cardID;
     }
 
-    this.subscription = this.transactionService
-      .createTransaction(data!)
-      .subscribe((result) => {
-        if (result.success) {
-          this.transactionService.requestUpdate();
-          this.accountsService.requestUpdate();
-          this.openSnackBar(result.message!, 'Done');
-        }
-      });
+    this.transactionService.setNewTransactionData(data!);
+    this.transactionService.startAddingNewTransaction();
   }
 
   setCurrentCurrency() {

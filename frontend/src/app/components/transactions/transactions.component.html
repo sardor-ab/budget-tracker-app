@@ -1,34 +1,43 @@
-<form class="transactions">
-  <app-search-bar (search)="search_request('works')"></app-search-bar>
-  <div class="transactions__filters">
-    <div class="transactions__filters-type">
-      <div
-        class="filter"
-        *ngFor="let type of types"
-        (click)="canUseFilters && type.method()"
-        [ngClass]="type.label === selectedFilterType ? 'selected' : ''"
-      >
-        <mat-icon class="filter-icon">{{ type.icon }}</mat-icon>
-        <span class="filter-label">{{ type.label }}</span>
-      </div>
+<ng-container *ngIf="transactions">
+  <div
+    class="transaction"
+    *ngFor="let transaction of transactions"
+    (click)="editTransaction(transaction)"
+  >
+    <div class="transaction__left">
+      <span class="transaction__left-category">
+        {{ transaction.categories[0] }}
+      </span>
     </div>
-    <div class="transactions__filters-date">
-      <div
-        class="filter"
-        *ngFor="let date of dates"
-        (click)="canUseFilters && date.method()"
-        [ngClass]="date.label === selectedFilterDate ? 'selected' : ''"
-      >
-        <mat-icon class="filter-icon">{{ date.icon }}</mat-icon>
-        <span class="filter-label">{{ date.label }}</span>
+    <div class="transaction__center">
+      <div class="transaction__center-top">
+        <span class="transaction__center-top-text">
+          {{ transaction.title }}
+        </span>
       </div>
-    </div>
-  </div>
 
-  <div class="transactions__empty" *ngIf="noTransactions">
-    No transactions yet...
+      <div class="transaction__center-bottom">
+        <span
+          [ngClass]="transaction.type === 'income' ? 'income' : ''"
+          class="transaction__center-bottom-item not-last type"
+        >
+          {{ transaction.type }}
+        </span>
+        <span class="transaction__center-bottom-item not-last">
+          {{ transaction.date | date: "dd.MM.yyyy" }}
+        </span>
+        <span class="transaction__center-bottom-item">
+          {{ transaction.payee }}
+        </span>
+      </div>
+    </div>
+    <div class="transaction__right">
+      <span
+        class="transaction__right-amount"
+        [ngClass]="transaction.type === 'income' ? 'income' : ''"
+      >
+        {{ transaction.amount }}
+      </span>
+    </div>
   </div>
-  <div class="transactions__list" *ngIf="!noTransactions">
-    <app-transaction [transactions]="transactions"></app-transaction>
-  </div>
-</form>
+</ng-container>

@@ -5,9 +5,9 @@ import {
   CategoryService,
   ICategory,
 } from 'src/app/config/services/category/category.service';
-import { AccountsService } from '../accounts/services/accounts.service';
-import { TransactionService } from '../transactions/services/transaction.service';
 import { SidenavService } from './services/sidenav.service';
+import { AccountsService } from '../accounts/services/accounts.service';
+import { TransactionService } from '../transactions/service/transaction.service';
 
 @Component({
   selector: 'app-sidenav',
@@ -17,8 +17,8 @@ import { SidenavService } from './services/sidenav.service';
 export class SidenavComponent implements OnInit {
   constructor(
     private sidenavService: SidenavService,
-    private accountsService: AccountsService,
     private categoryService: CategoryService,
+    private accountsService: AccountsService,
     private transactionService: TransactionService
   ) {
     const currentYear = new Date();
@@ -88,9 +88,6 @@ export class SidenavComponent implements OnInit {
     date: new FormControl('', [Validators.required]),
     payee: new FormControl('', [Validators.required]),
     description: new FormControl(''),
-
-    // card: new FormControl(this.responce.transaction?.card!),
-    // attachment: new FormControl(''),
   });
 
   get transactionTitle() {
@@ -225,11 +222,12 @@ export class SidenavComponent implements OnInit {
         this.responce.account?._id!
       );
     } else {
-      this.transactionService.editTransaction(
+      this.transactionService.setTransactionDataToUpdate(
         this.transactionForm.value,
         this.responce.transaction?.card!,
         this.responce.transaction?._id!
       );
+      this.transactionService.updateTransaction();
     }
 
     this.onClose();

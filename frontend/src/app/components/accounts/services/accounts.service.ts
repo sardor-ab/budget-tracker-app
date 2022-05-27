@@ -91,6 +91,7 @@ export class AccountsService {
   }
 
   declineUpdate() {
+    this.spinnerService.hideSpinner();
     this.isUpdated$.next(false);
   }
 

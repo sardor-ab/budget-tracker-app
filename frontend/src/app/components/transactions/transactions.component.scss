@@ -1,45 +1,76 @@
-.transactions {
-  &__filters {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+@use "../../../colors.scss" as color;
 
-    &-type,
-    &-date {
-      width: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      & .filter {
-        display: flex;
-        align-items: center;
-        cursor: pointer;
-        background-color: #eceded;
-        border-radius: 10px;
-        min-width: 25%;
-        padding: 10px;
+@mixin text-color {
+  color: color.$error;
 
-        &-label {
-          width: 100%;
-          margin: auto;
-          text-align: center;
+  &.income {
+    color: color.$success;
+  }
+}
+.transaction {
+  width: 95%;
+  margin: 0 auto 16px;
+  padding: 16px;
+  background-color: #fff;
+  border-radius: 10px;
+
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+
+  &__left,
+  &__right {
+    width: 25%;
+    text-align: center;
+  }
+
+  &__left {
+    background-color: #eceded;
+    border-radius: 10px;
+    padding: 8px;
+    margin-right: 16px;
+  }
+
+  &__center {
+    width: 50%;
+
+    &-bottom {
+      &-icon {
+        color: #fff;
+        border-radius: 25px;
+        background-color: color.$success;
+        margin-right: 4px;
+
+        &.expense {
+          transform: rotate(180deg);
+          background-color: color.$error;
+        }
+      }
+      &-item {
+        &.type {
+          @include text-color;
         }
 
-        &.selected {
-          background-color: #fff;
-          filter: drop-shadow(5px 10px 20px rgba(0, 0, 0, 0.25));
+        &.not-last:after {
+          content: "";
+          width: 4px;
+          height: 4px;
+          background-color: #bfbfbf;
+          display: inline-block;
+          border-radius: 50%;
+          margin-right: 6px;
+          margin-left: 6px;
+          vertical-align: middle;
         }
       }
     }
   }
 
-  &__empty {
-    margin-top: 1rem;
-  }
+  &__right {
+    align-self: flex-start;
 
-  &__list {
-    margin-top: 1rem;
-    height: calc(100vh - 20em);
-    overflow-y: scroll;
+    &-amount {
+      @include text-color;
+    }
   }
 }

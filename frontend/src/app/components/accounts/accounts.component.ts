@@ -29,6 +29,7 @@ export class AccountsComponent implements OnInit {
         } else {
           this.noAccounts = true;
         }
+        this.accountsService.declineUpdate();
       });
   }
 
@@ -39,7 +40,6 @@ export class AccountsComponent implements OnInit {
       .subscribe((state) => {
         if (state) {
           this.loadAccounts();
-          this.accountsService.declineUpdate();
         }
       });
   }

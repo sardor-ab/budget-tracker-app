@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { IUserResponceModel } from '../../../models/userResponceModel';
+import { IUserResponceModel } from '../../../models/ResponceModels';
 import { LoginService } from '../services/login.service';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';

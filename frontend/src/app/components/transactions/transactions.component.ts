@@ -1,10 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { ITransaction } from 'src/app/models/ResponceModels';
 import { Subscription } from 'rxjs';
-import { SpinnerService } from '../spinner/services/spinner.service';
-import {
-  ITransactionsResModel,
-  TransactionService,
-} from './services/transaction.service';
+import { SidenavService } from '../sidenav/services/sidenav.service';
+import { TransactionService } from './service/transaction.service';
 
 @Component({
   selector: 'app-transactions',
@@ -13,106 +11,43 @@ import {
 })
 export class TransactionsComponent implements OnInit {
   constructor(
-    private transactionService: TransactionService,
-    private spinnerService: SpinnerService
-  ) {
-    this.subscription = this.transactionService
-      .shouldUpdate$()
-      .subscribe((state) => {
-        if (state) {
-          this.fillTransactions(
-            this.selectedFilterType,
-            this.selectedFilterDate
-          );
-        }
-      });
-  }
-  @Input() type!: string;
-  selectedFilterType: string = 'all';
-  selectedFilterDate: string = 'latest';
-  currentID: string = '';
+    private sidenavService: SidenavService,
+    private transactionService: TransactionService
+  ) {}
+
+  @Input() transactions!: ITransaction[];
 
   subscription: Subscription = new Subscription();
 
-  transactions!: ITransactionsResModel['data'];
-
-  noTransactions: boolean = true;
-  canUseFilters: boolean = true;
-
-  search_request(request: string) {
-    console.log(request);
-  }
-
-  // STATIC DATA
-  types = [
-    {
-      label: 'income',
-      icon: 'arrow_upward',
-      method: () => this.sortByType('income'),
-    },
-    {
-      label: 'expense',
-      icon: 'arrow_downward',
-      method: () => this.sortByType('expense'),
-    },
-  ];
-
-  dates = [
-    {
-      label: 'latest',
-      icon: 'arrow_downward',
-      method: () => this.sortByDate('latest'),
-    },
-    {
-      label: 'oldest',
-      icon: 'arrow_upward',
-      method: () => this.sortByDate('oldest'),
-    },
-  ];
-  // !STATIC DATA
-
-  // SORTING
-  sortByDate(filter: string) {
-    this.selectedFilterDate = filter;
-    this.fillTransactions(this.selectedFilterType, this.selectedFilterDate);
-  }
-
-  sortByType(filter: string) {
-    if (filter !== this.selectedFilterType) {
-      this.selectedFilterType = filter;
-    } else {
-      this.selectedFilterType = 'all';
-    }
-    this.fillTransactions(this.selectedFilterType, this.selectedFilterDate);
-  }
-  // !SORTING
-
-  fillTransactions(filterType: string, filterDate: string) {
+  ngOnInit(): void {
     this.subscription = this.transactionService
-      .getTransactions(filterType, filterDate)
-      .subscribe((result) => {
-        if (result !== null && result.success) {
-          this.transactions = result.data;
-          this.noTransactions = false;
-        } else {
-          this.noTransactions = true;
-        }
-      });
-    // very dump solution I guess 🥴
-    this.subscription = this.transactionService
-      .getTransactions('all', 'latest')
-      .subscribe((result) => {
-        if (!result) {
-          this.canUseFilters = false;
-        } else {
-          this.canUseFilters = true;
+      .isNewTransaction$()
+      .subscribe((state: boolean) => {
+        if (state) {
+          this.transactionService.createTransaction();
+          this.transactionService.completeUpdate();
         }
       });
 
-    this.spinnerService.hideSpinner();
+    this.subscription = this.transactionService
+      .shouldUpdateTransaction$()
+      .subscribe((state) => {
+        if (state) {
+          this.transactionService.editTransaction();
+          this.transactionService.completeUpdate();
+        }
+      });
   }
 
-  ngOnInit(): void {}
+  editTransaction(transaction: ITransaction): void {
+    const data = {
+      title: 'Transaction',
+      transaction: transaction,
+    };
+
+    this.sidenavService.setSidenavData$(data);
+    this.sidenavService.showSideNav();
+  }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
