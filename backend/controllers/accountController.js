@@ -111,7 +111,6 @@ const updateAccount = asyncHandler(async (req, res) => {
       if (error) {
         res.send(error);
       } else {
-        sortAccounts(req.user);
         res.json({
           success: true,
           data: {

@@ -43,6 +43,8 @@ export class AccountsService {
     // type: string;
     description: string;
   }) {
+    this.idUpdate();
+    this.requestUpdate();
     return this.httpClient.post<AccountsResponce>(
       `${environment.api}accounts/create`,
       data
@@ -66,6 +68,8 @@ export class AccountsService {
     id: string
   ) {
     this.spinnerService.showSpinner();
+    this.idUpdate();
+    this.requestUpdate();
     return this.httpClient
       .put<AccountsResponce>(`${environment.api}accounts/update/${id}`, data)
       .subscribe((result) => {
