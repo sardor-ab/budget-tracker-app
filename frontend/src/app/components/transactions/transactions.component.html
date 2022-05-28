@@ -1,4 +1,4 @@
-<ng-container *ngIf="transactions">
+<ng-container *ngIf="transactions && !noItems">
   <div
     class="transaction"
     *ngFor="let transaction of transactions"
@@ -41,3 +41,4 @@
     </div>
   </div>
 </ng-container>
+<ng-container *ngIf="noItems">No transactions yet...</ng-container>

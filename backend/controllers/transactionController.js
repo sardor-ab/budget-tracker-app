@@ -104,20 +104,10 @@ const getUserTransactions = asyncHandler(async (req, res) => {
     return b.date - a.date;
   });
 
-  //Think about this lenght changing!
-  if (transactions.length != 0) {
-    res.json({
-      success: true,
-      transactions: transactions,
-      message: "At least one transaction is available",
-    });
-  } else {
-    res.status(204).json({
-      success: true,
-      transactions: [],
-      message: "No available transaction!",
-    });
-  }
+  return res.json({
+    success: true,
+    transactions: transactions,
+  });
 });
 
 //@description Delete user's exact transaction

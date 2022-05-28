@@ -16,6 +16,7 @@ export class TransactionsComponent implements OnInit {
   ) {}
 
   @Input() transactions!: ITransaction[];
+  @Input() noItems!: boolean;
 
   subscription: Subscription = new Subscription();
 

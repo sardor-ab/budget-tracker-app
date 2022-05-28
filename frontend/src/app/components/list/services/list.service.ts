@@ -19,4 +19,14 @@ export class ListService {
   updateType(type: string): void {
     this.currentListType$.next(type);
   }
+
+  private isListFilled$: Subject<boolean> = new BehaviorSubject<boolean>(false);
+
+  getIsListFilled$() {
+    return this.isListFilled$.asObservable().pipe(observeOn(asyncScheduler));
+  }
+
+  setIsListFilled(state: boolean): void {
+    this.isListFilled$.next(state);
+  }
 }

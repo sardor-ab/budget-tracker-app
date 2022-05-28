@@ -12,9 +12,8 @@ import { ListService } from '../services/list.service';
 })
 export class ListComponent implements OnInit {
   constructor(
-    private listService: ListService,
-    private spinnerService: SpinnerService,
-    private transactionService: TransactionService
+    private transactionService: TransactionService,
+    private listService: ListService
   ) {}
 
   @Input() type!: string;
@@ -24,10 +23,8 @@ export class ListComponent implements OnInit {
   selectedFilterType: string = 'all';
   selectedFilterDate: string = 'latest';
 
-  showTransactions: boolean = false;
-  showCategories: boolean = false;
   canUseFilters: boolean = true;
-  noItems: boolean = false;
+  noItems: boolean = true;
 
   transactions!: IItemsResponceModel['transactions'];
   categories!: IItemsResponceModel['categories'];
@@ -49,21 +46,18 @@ export class ListComponent implements OnInit {
   dates: IFilter[] = [
     {
       label: 'latest',
-      icon: 'arrow_downward',
+
       method: () => this.sortByDate('latest'),
     },
     {
       label: 'oldest',
-      icon: 'arrow_upward',
+
       method: () => this.sortByDate('oldest'),
     },
   ];
   // !STATIC DATA
 
   ngOnInit(): void {
-    if (this.type === 'transactions') {
-      this.showTransactions = true;
-    }
     this.subscription = this.transactionService
       .currentUpdateState$()
       .subscribe((state) => {
@@ -82,7 +76,14 @@ export class ListComponent implements OnInit {
           this.transactions =
             this.transactionService.getTransactionList$().transactions;
           this.transactionService.fillState(false);
+          this.listService.setIsListFilled(this.transactions?.length === 0);
         }
+      });
+
+    this.subscription = this.listService
+      .getIsListFilled$()
+      .subscribe((state) => {
+        this.noItems = state;
       });
   }
 
@@ -108,6 +109,6 @@ export class ListComponent implements OnInit {
 
 interface IFilter {
   label: string;
-  icon: string;
+  icon?: string;
   method(): void;
 }
