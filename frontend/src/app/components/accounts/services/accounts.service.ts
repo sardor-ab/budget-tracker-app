@@ -22,9 +22,19 @@ export class AccountsService {
   private currentId$: Subject<string> = new BehaviorSubject<string>('');
   private currentCurrency$: Subject<string> = new BehaviorSubject<string>('');
 
+  private index$: Subject<number> = new BehaviorSubject<number>(0);
+
   openSnackBar(message: string, action: string) {
     this._snackBar.open(message, action, { duration: 5000 });
     this.spinnerService.hideSpinner();
+  }
+
+  getIndex$() {
+    return this.index$.asObservable().pipe(observeOn(asyncScheduler));
+  }
+
+  setIndex(index: number) {
+    this.index$.next(index);
   }
 
   createAccount(data: {
@@ -91,6 +101,7 @@ export class AccountsService {
   }
 
   declineUpdate() {
+    this.setIndex(0);
     this.spinnerService.hideSpinner();
     this.isUpdated$.next(false);
   }

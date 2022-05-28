@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { SidenavService } from '../../sidenav/services/sidenav.service';
 import { AccountsResponce } from '../models/accountsResponceModel';
 import { AccountsService } from '../services/accounts.service';
@@ -13,6 +14,7 @@ export class AccountComponent implements OnInit {
     private sidenavService: SidenavService,
     private accountsService: AccountsService
   ) {}
+  subscription: Subscription = new Subscription();
   @Input() accounts!: AccountsResponce['data'];
   active: number = 0;
 
@@ -21,6 +23,12 @@ export class AccountComponent implements OnInit {
       this.accountsService.updateCurrentId(this.accounts[0]._id);
       this.accountsService.updateCurrentCurrency(this.accounts[0].currency);
     }
+
+    this.subscription = this.accountsService
+      .getIndex$()
+      .subscribe((index: number) => {
+        this.active = index;
+      });
   }
 
   onEditAccountButtonClicked(account: any) {
