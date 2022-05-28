@@ -27,7 +27,7 @@ export class ListComponent implements OnInit {
   showTransactions: boolean = false;
   showCategories: boolean = false;
   canUseFilters: boolean = true;
-  noItems: boolean = true;
+  noItems: boolean = false;
 
   transactions!: IItemsResponceModel['transactions'];
   categories!: IItemsResponceModel['categories'];
@@ -68,10 +68,20 @@ export class ListComponent implements OnInit {
       .currentUpdateState$()
       .subscribe((state) => {
         if (state) {
-          this.fillTranactions(
+          this.transactionService.getTransactions(
             this.selectedFilterType,
             this.selectedFilterDate
           );
+        }
+      });
+
+    this.subscription = this.transactionService
+      .currentFillState$()
+      .subscribe((state) => {
+        if (state) {
+          this.transactions =
+            this.transactionService.getTransactionList$().transactions;
+          this.transactionService.fillState(false);
         }
       });
   }
@@ -89,24 +99,6 @@ export class ListComponent implements OnInit {
       this.selectedFilterType = 'all';
     }
     this.transactionService.requestUpdate();
-  }
-  // !SORTING
-
-  fillTranactions(filterType: string, filterDate: string): void {
-    this.spinnerService.showSpinner();
-
-    this.subscription = this.transactionService
-      .getTransactions(filterType, filterDate)
-      .subscribe((result) => {
-        if (result !== null && result.success) {
-          this.transactions = result.transactions;
-          this.noItems = false;
-        } else {
-          this.noItems = true;
-        }
-      });
-
-    this.spinnerService.hideSpinner();
   }
 
   ngOnDestroy(): void {

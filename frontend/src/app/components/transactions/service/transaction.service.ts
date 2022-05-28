@@ -39,6 +39,14 @@ export class TransactionService {
   private cardID: string = '';
   private transactionID: string = '';
 
+  private getResponce$ = new BehaviorSubject<IItemsResponceModel>({
+    success: false,
+    message: '',
+    transactions: [],
+  });
+
+  private shouldFill$: Subject<boolean> = new BehaviorSubject<boolean>(false);
+
   private shouldUpdated$: Subject<boolean> = new BehaviorSubject<boolean>(
     false
   );
@@ -89,13 +97,31 @@ export class TransactionService {
       .asObservable()
       .pipe(observeOn(asyncScheduler));
   }
+  currentFillState$() {
+    return this.shouldFill$.asObservable().pipe(observeOn(asyncScheduler));
+  }
+
+  getTransactionList$() {
+    return this.getResponce$.getValue();
+  }
+
+  fillState(state: boolean) {
+    this.shouldFill$.next(state);
+  }
 
   getTransactions(filterType: string, filterDate: string) {
     this.completeUpdate();
 
-    return this.httpClient.get<IItemsResponceModel>(
-      `${environment.api}transactions/${this.id}?type=${filterType}&date=${filterDate}`
-    );
+    return this.httpClient
+      .get<IItemsResponceModel>(
+        `${environment.api}transactions/${this.id}?type=${filterType}&date=${filterDate}`
+      )
+      .subscribe((result) => {
+        if (result.success) {
+          this.getResponce$.next(result);
+          this.fillState(true);
+        }
+      });
   }
   private transactionToUpdate$ = new BehaviorSubject<ITransaction>({
     user: '',
@@ -130,6 +156,7 @@ export class TransactionService {
   }
 
   transactionUpdated$() {
+    this.accountsService.requestUpdate();
     this.updateTransaction$.next(false);
   }
 
