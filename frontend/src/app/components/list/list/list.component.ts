@@ -23,7 +23,7 @@ export class ListComponent implements OnInit {
   selectedFilterType: string = 'all';
   selectedFilterDate: string = 'latest';
 
-  canUseFilters: boolean = true;
+  canUseFilters: boolean = false;
   noItems: boolean = true;
 
   transactions!: IItemsResponceModel['transactions'];
@@ -84,6 +84,7 @@ export class ListComponent implements OnInit {
       .getIsListFilled$()
       .subscribe((state) => {
         this.noItems = state;
+        this.canUseFilters = !state;
       });
   }
 

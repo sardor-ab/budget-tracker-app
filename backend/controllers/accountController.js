@@ -5,23 +5,44 @@ import Account from "../models/accountModel.js";
 //@route GET /api/accounts
 //@access PRIVATE
 const getUserAccounts = asyncHandler(async (req, res) => {
-  const accounts = await Account.find({ user: req.user }).sort({
-    updatedAt: -1,
-  });
+  const accounts = await Account.aggregate([
+    {
+      $set: {
+        user_id: {
+          $toString: "$user",
+        },
+      },
+    },
+    {
+      $match: {
+        user_id: req.user,
+      },
+    },
+    {
+      $sort: {
+        updatedAt: -1,
+      },
+    },
+  ]);
 
-  if (accounts.length != 0) {
-    res.json({
-      success: true,
-      data: accounts,
-      message: "At least one account is available",
-    });
-  } else {
-    res.status(204).json({
-      success: false,
-      data: [],
-      message: "No available accounts!",
-    });
-  }
+  return res.json({
+    success: true,
+    data: accounts,
+    // message: "At least one account is available",
+  });
+  // if (accounts.length != 0) {
+  //   res.json({
+  //     success: true,
+  //     data: accounts,
+  //     message: "At least one account is available",
+  //   });
+  // } else {
+  //   res.status(204).json({
+  //     success: false,
+  //     data: [],
+  //     message: "No available accounts!",
+  //   });
+  // }
 });
 
 //@description Provide the accounts based on ID

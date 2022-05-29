@@ -21,11 +21,12 @@ export class AccountsComponent implements OnInit {
     this.subscription = this.accountsService
       .getUserAccounts()
       .subscribe((data) => {
-        if (data) {
+        if (data.success) {
           this.accountsResponce = data;
-          this.noAccounts = !this.accountsResponce.success;
 
           this.accounts = this.accountsResponce.data;
+
+          this.noAccounts = this.accounts?.length === 0;
         } else {
           this.noAccounts = true;
         }

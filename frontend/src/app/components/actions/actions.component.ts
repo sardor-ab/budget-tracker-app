@@ -31,8 +31,8 @@ export class ActionsComponent implements OnInit {
 
   updateAccessState() {
     this.subscription = this.actionsService.noAccounts().subscribe((result) => {
-      if (result) {
-        this.noAccounts = !result.success;
+      if (result.success) {
+        this.noAccounts = result.data?.length === 0;
       } else {
         this.noAccounts = true;
       }
