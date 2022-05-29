@@ -1,6 +1,5 @@
 import asyncHandler from "express-async-handler";
 import Account from "../models/accountModel.js";
-import ObjectId from "mongodb";
 
 //@description Provide all accounts based on user
 //@route GET /api/accounts
@@ -9,17 +8,6 @@ const getUserAccounts = asyncHandler(async (req, res) => {
   const accounts = await Account.find({ user: req.user }).sort({
     updatedAt: -1,
   });
-
-  // const accounts = await Account.aggregate([
-  //   {
-  //     $match: { user: new ObjectId(req.user.toHexString) },
-  //   },
-  //   {
-  //     $sort: {
-  //       updatedAt: -1,
-  //     },
-  //   },
-  // ]);
 
   if (accounts.length != 0) {
     res.json({
@@ -120,6 +108,7 @@ const updateAccount = asyncHandler(async (req, res) => {
             type,
             description,
           },
+          message: "Account updated successfully",
         });
       }
     }

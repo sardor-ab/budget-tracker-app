@@ -74,7 +74,7 @@ export class AccountsService {
       .put<AccountsResponce>(`${environment.api}accounts/update/${id}`, data)
       .subscribe((result) => {
         if (result.success) {
-          this.openSnackBar('Account changed successfully!', 'Done');
+          this.openSnackBar(result.message!, 'Done');
           this.requestUpdate();
         }
       });
