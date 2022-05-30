@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { delay, Subscription } from 'rxjs';
 import { IItemsResponceModel } from 'src/app/models/ResponceModels';
-import { SpinnerService } from '../../spinner/services/spinner.service';
+import { CategoryService } from '../../categories/service/category.service';
 import { TransactionService } from '../../transactions/service/transaction.service';
 import { ListService } from '../services/list.service';
 
@@ -13,6 +13,7 @@ import { ListService } from '../services/list.service';
 export class ListComponent implements OnInit {
   constructor(
     private transactionService: TransactionService,
+    private categoryService: CategoryService,
     private listService: ListService
   ) {}
 
@@ -58,40 +59,33 @@ export class ListComponent implements OnInit {
   // !STATIC DATA
 
   ngOnInit(): void {
-    this.subscription = this.transactionService
-      .currentUpdateState$()
-      .subscribe((state) => {
-        if (state) {
-          this.transactionService.getTransactions(
-            this.selectedFilterType,
-            this.selectedFilterDate
-          );
-        }
-      });
+    switch (this.type) {
+      case 'transactions':
+        this.subscription = this.transactionService
+          .getTransactionList$()
+          .subscribe((result) => {
+            this.transactions = result.transactions;
+            this.noItems = this.transactions?.length === 0;
+            this.canUseFilters = result.success;
+          });
+        break;
 
-    this.subscription = this.transactionService
-      .currentFillState$()
-      .subscribe((state) => {
-        if (state) {
-          this.transactions =
-            this.transactionService.getTransactionList$().transactions;
-          this.transactionService.fillState(false);
-          this.listService.setIsListFilled(this.transactions?.length === 0);
-        }
-      });
-
-    this.subscription = this.listService
-      .getIsListFilled$()
-      .subscribe((state) => {
-        this.noItems = state;
-        this.canUseFilters = !state;
-      });
+      case 'categories':
+        this.subscription = this.categoryService
+          .shouldUpdate$()
+          .subscribe((state) => {
+            if (state) {
+              this.categoryService.getCategories(this.selectedFilterType);
+            }
+          });
+        break;
+    }
   }
 
   // SORTING
   sortByDate(filter: string): void {
     this.selectedFilterDate = filter;
-    this.transactionService.requestUpdate();
+    this.transactionService.setFilterDate(this.selectedFilterDate);
   }
 
   sortByType(filter: string): void {
@@ -100,7 +94,14 @@ export class ListComponent implements OnInit {
     } else {
       this.selectedFilterType = 'all';
     }
-    this.transactionService.requestUpdate();
+    switch (this.type) {
+      case 'transactions':
+        this.transactionService.setFilterType(this.selectedFilterType);
+        break;
+      case 'categories':
+        this.categoryService.setUpdateState(true);
+        break;
+    }
   }
 
   ngOnDestroy(): void {

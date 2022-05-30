@@ -11,29 +11,40 @@ export class CategoryService {
   constructor(private httpClient: HttpClient) {}
 
   private isUpdated$: Subject<boolean> = new BehaviorSubject<boolean>(false);
+  private categoryList$: Subject<ICategory[]> = new BehaviorSubject<
+    ICategory[]
+  >([]);
+  private isCategoryListFilled$: Subject<boolean> =
+    new BehaviorSubject<boolean>(false);
 
   shouldUpdate$() {
     return this.isUpdated$.asObservable().pipe(observeOn(asyncScheduler));
   }
 
-  requestUpdate() {
-    this.isUpdated$.next(true);
+  setUpdateState(state: boolean) {
+    this.isUpdated$.next(state);
   }
 
-  completeUpdate() {
-    this.isUpdated$.next(false);
+  categoryListFilled$(state: boolean) {
+    this.isCategoryListFilled$.next(state);
+  }
+
+  getCategoryList$() {
+    return this.categoryList$.asObservable().pipe(observeOn(asyncScheduler));
   }
 
   getCategories(type: string) {
-    return this.httpClient.get<ICategoryResult>(
-      `${environment.api}categories/?type=${type}`
-    );
+    return this.httpClient
+      .get<ICategoryResult>(`${environment.api}categories/?type=${type}`)
+      .subscribe((result) => {
+        this.categoryList$.next(result.categories);
+      });
   }
 }
 
 export interface ICategoryResult {
   success: boolean;
-  data: ICategory[];
+  categories: ICategory[];
 }
 
 export interface ICategory {

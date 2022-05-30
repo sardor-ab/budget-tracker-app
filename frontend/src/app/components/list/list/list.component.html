@@ -12,7 +12,7 @@
         <span class="filter-label">{{ type.label }}</span>
       </div>
     </div>
-    <div class="list__filters-date">
+    <div class="list__filters-date" *ngIf="type !== 'categories'">
       <div
         class="filter"
         *ngFor="let date of dates"
@@ -30,5 +30,10 @@
       [transactions]="transactions!"
       [noItems]="noItems"
     ></app-transactions>
+    <app-categories
+      *ngSwitchCase="'categories'"
+      [categories]="categories!"
+      [noItems]="noItems"
+    ></app-categories>
   </div>
 </form>

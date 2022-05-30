@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import {
-  CategoryService,
-  ICategory,
-} from 'src/app/config/services/category/category.service';
+
 import { SidenavService } from './services/sidenav.service';
 import { AccountsService } from '../accounts/services/accounts.service';
 import { TransactionService } from '../transactions/service/transaction.service';
+import { CategoryService } from '../categories/service/category.service';
+import { ICategory } from 'src/app/models/ResponceModels';
 
 @Component({
   selector: 'app-sidenav',
@@ -146,6 +145,12 @@ export class SidenavComponent implements OnInit {
           this.isAccount = false;
         }
       });
+
+    this.subscription = this.categoryService
+      .getCategoryList$()
+      .subscribe((categories) => {
+        this.categoriesList = categories;
+      });
   }
 
   ngOnDestroy() {
@@ -153,15 +158,11 @@ export class SidenavComponent implements OnInit {
   }
 
   setTransactionCategoryList(type: string) {
+    this.categoryService.getCategories(type);
     if (type != this.currentTransactionType) {
       this.preSelected = [];
+      this.transactionCategories?.setValue(this.preSelected);
     }
-    this.categoryService.getCategories(type).subscribe((cats) => {
-      if (cats.success) {
-        this.categoriesList = cats.data;
-        this.transactionCategories?.setValue(this.preSelected);
-      }
-    });
   }
 
   openEditPanel(title: string) {
@@ -182,13 +183,13 @@ export class SidenavComponent implements OnInit {
       );
       this.transactionType?.setValue(this.responce.transaction?.type);
 
-      this.currentTransactionType = this.transactionType?.value;
+      this.setTransactionCategoryList(this.transactionType?.value);
 
       this.responce.transaction?.categories.map((category) => {
         this.preSelected.push(category);
       });
 
-      this.setTransactionCategoryList(this.currentTransactionType);
+      this.transactionCategories?.setValue(this.preSelected);
 
       this.transactionAmount?.setValue(this.responce.transaction?.amount);
       this.transactionDate?.setValue(this.responce.transaction?.date);
@@ -222,12 +223,10 @@ export class SidenavComponent implements OnInit {
         this.responce.account?._id!
       );
     } else {
-      this.transactionService.setTransactionDataToUpdate(
+      this.transactionService.editTransaction(
         this.transactionForm.value,
-        this.responce.transaction?.card!,
         this.responce.transaction?._id!
       );
-      this.transactionService.updateTransaction();
     }
 
     this.onClose();

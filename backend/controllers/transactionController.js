@@ -72,10 +72,15 @@ const createTransaction = asyncHandler(async (req, res) => {
 
   await calculateBalance(user, card);
 
+  const transactions = await Transaction.find({
+    user,
+    card,
+  });
+
   return res.json({
     success: true,
-    message: "Transaction added",
-    transactions: [],
+    message: "Transaction added successfully!",
+    transactions,
   });
 });
 
@@ -121,10 +126,15 @@ const deleteTransaction = asyncHandler(async (req, res) => {
 
   calculateBalance(user, card);
 
+  const transactions = await Transaction.find({
+    user,
+    card,
+  });
+
   res.status(200).json({
     success: true,
     message: "Transaction deleted successfully",
-    transactions: [],
+    transactions,
   });
 });
 
@@ -176,6 +186,7 @@ const updateTransaction = asyncHandler(async (req, res) => {
         res.send(error);
       } else {
         calculateBalance(user, card);
+
         res.json({
           success: true,
           transaction: {

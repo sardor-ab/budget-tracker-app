@@ -8,6 +8,7 @@ import { SharedModule } from './shared/shared.module';
 import { ComponentsModule } from './components/components.module';
 import { HttpClientModule } from '@angular/common/http';
 import { DashboardModule } from './components/dashboard/dashboard.module';
+import { PageCategoriesModule } from './components/page-categories/page-categories.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -19,6 +20,7 @@ import { DashboardModule } from './components/dashboard/dashboard.module';
     AppRoutingModule,
     MatFormFieldModule,
     DashboardModule,
+    PageCategoriesModule,
     ComponentsModule,
   ],
   providers: [],

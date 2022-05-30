@@ -1,15 +1,21 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { BehaviorSubject, asyncScheduler, Subject, Subscription } from 'rxjs';
+import {
+  BehaviorSubject,
+  asyncScheduler,
+  Subject,
+  Subscription,
+  of,
+} from 'rxjs';
 import { observeOn } from 'rxjs/operators';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { AccountsService } from '../../accounts/services/accounts.service';
 import {
   IItemsResponceModel,
   ITransaction,
 } from 'src/app/models/ResponceModels';
 import { SpinnerService } from '../../spinner/services/spinner.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root',
@@ -25,8 +31,7 @@ export class TransactionService {
       .getCurrentID$()
       .subscribe((id: string) => {
         if (id) {
-          this.id = id;
-          this.requestUpdate();
+          this.getTransactions(id, this.filterType, this.filterDate);
         }
       });
   }
@@ -35,180 +40,96 @@ export class TransactionService {
   }
 
   subscription: Subscription = new Subscription();
-  private id: string = '';
+
+  private filterType: string = 'all';
+  setFilterType(filterType: string) {
+    this.filterType = filterType;
+    this.getTransactions(this.cardID, this.filterType, this.filterDate);
+  }
+  private filterDate: string = 'lates';
+  setFilterDate(filterDate: string) {
+    this.filterDate = filterDate;
+    this.getTransactions(this.cardID, this.filterType, this.filterDate);
+  }
+
   private cardID: string = '';
-  private transactionID: string = '';
 
-  private getResponce$ = new BehaviorSubject<IItemsResponceModel>({
-    success: false,
-    message: '',
-    transactions: [],
-  });
-
-  private shouldFill$: Subject<boolean> = new BehaviorSubject<boolean>(false);
-
-  private shouldUpdated$: Subject<boolean> = new BehaviorSubject<boolean>(
-    false
-  );
-
-  currentUpdateState$() {
-    return this.shouldUpdated$.asObservable().pipe(observeOn(asyncScheduler));
-  }
-
-  requestUpdate(): void {
-    this.shouldUpdated$.next(true);
-  }
-
-  completeUpdate(): void {
-    this.shouldUpdated$.next(false);
-  }
-
-  private addingNewTransaction$: Subject<boolean> =
-    new BehaviorSubject<boolean>(false);
-  private newTransactionData$ = new BehaviorSubject<ITransaction>({
-    user: '',
-    title: '',
-    type: '',
-    categories: [],
-    amount: 0,
-    payee: '',
-    date: new Date(),
-    description: '',
-    card: '',
-    attachment: '',
-  });
-
-  setNewTransactionData(data: ITransaction) {
-    this.newTransactionData$.next(data);
-  }
-
-  startAddingNewTransaction() {
-    this.addingNewTransaction$.next(true);
-    this.spinnerService.showSpinner();
-  }
-
-  completeAddingNewTransaction() {
-    this.addingNewTransaction$.next(false);
-    this.spinnerService.hideSpinner();
-  }
-
-  isNewTransaction$() {
-    return this.addingNewTransaction$
-      .asObservable()
-      .pipe(observeOn(asyncScheduler));
-  }
-  currentFillState$() {
-    return this.shouldFill$.asObservable().pipe(observeOn(asyncScheduler));
-  }
+  private getResponce$: Subject<IItemsResponceModel> =
+    new BehaviorSubject<IItemsResponceModel>({
+      success: false,
+      message: '',
+      transactions: [],
+    });
 
   getTransactionList$() {
-    return this.getResponce$.getValue();
+    this.spinnerService.showSpinner();
+    return this.getResponce$.asObservable().pipe(observeOn(asyncScheduler));
   }
 
-  fillState(state: boolean) {
-    this.shouldFill$.next(state);
-  }
+  getTransactions(id: string, filterType: string, filterDate: string) {
+    if (!id) {
+      return of<IItemsResponceModel>({
+        success: false,
+        message: 'No transactions found!',
+        transactions: [],
+      });
+    }
 
-  getTransactions(filterType: string, filterDate: string) {
-    this.completeUpdate();
+    this.cardID = id;
 
     return this.httpClient
       .get<IItemsResponceModel>(
-        `${environment.api}transactions/${this.id}?type=${filterType}&date=${filterDate}`
+        `${environment.api}transactions/${id}?type=${filterType}&date=${filterDate}`
       )
       .subscribe((result) => {
-        if (result.success) {
-          this.getResponce$.next(result);
-          this.fillState(true);
-        }
+        this.getResponce$.next(result);
+        this.spinnerService.hideSpinner();
       });
   }
-  private transactionToUpdate$ = new BehaviorSubject<ITransaction>({
-    user: '',
-    title: '',
-    type: '',
-    categories: [],
-    amount: 0,
-    payee: '',
-    date: new Date(),
-    description: '',
-    card: '',
-    attachment: '',
-  });
-  private updateTransaction$: Subject<boolean> = new BehaviorSubject<boolean>(
-    false
-  );
 
-  setTransactionDataToUpdate(data: ITransaction, cardID: string, id: string) {
-    this.cardID = cardID;
-    this.transactionID = id;
-    this.transactionToUpdate$.next(data);
-  }
-
-  shouldUpdateTransaction$() {
-    return this.updateTransaction$
-      .asObservable()
-      .pipe(observeOn(asyncScheduler));
-  }
-
-  updateTransaction() {
-    this.updateTransaction$.next(true);
-  }
-
-  transactionUpdated$() {
-    this.accountsService.requestUpdate();
-    this.updateTransaction$.next(false);
-  }
-
-  editTransaction() {
-    this.completeUpdate();
+  editTransaction(data: ITransaction, transactionID: string) {
     this.spinnerService.showSpinner();
 
     return this.httpClient
       .put<IItemsResponceModel>(
-        `${environment.api}transactions/update/?card=${this.cardID}&transaction=${this.transactionID}`,
-        this.transactionToUpdate$.getValue()
+        `${environment.api}transactions/update/?card=${this.cardID}&transaction=${transactionID}`,
+        data
       )
       .subscribe((result) => {
-        if (result.success) {
-          this.spinnerService.hideSpinner();
-          this.accountsService.requestUpdate();
-          this.transactionUpdated$();
-          this.requestUpdate();
-        }
+        this.getTransactions(this.cardID, 'all', 'lates');
+        this.accountsService.requestUpdate();
         this.openSnackBar(result.message!, 'Done');
+        this.spinnerService.hideSpinner();
       });
   }
 
-  createTransaction() {
+  createTransaction(data: ITransaction) {
+    this.spinnerService.showSpinner();
+
+    data.card = this.cardID;
+
     return this.httpClient
-      .post<IItemsResponceModel>(
-        `${environment.api}transactions/create`,
-        this.newTransactionData$.getValue()
-      )
+      .post<IItemsResponceModel>(`${environment.api}transactions/create`, data)
       .subscribe((result) => {
-        if (result.success) {
-          this.spinnerService.hideSpinner();
-          this.accountsService.requestUpdate();
-          this.completeAddingNewTransaction();
-          this.requestUpdate();
-        }
+        this.getResponce$.next(result);
+        this.accountsService.requestUpdate();
         this.openSnackBar(result.message!, 'Done');
+        this.spinnerService.hideSpinner();
       });
   }
 
   deleteTransaction(cardID: string, transactionID: string) {
     this.spinnerService.showSpinner();
+
     return this.httpClient
       .delete<IItemsResponceModel>(
         `${environment.api}transactions/delete/?card=${cardID}&transaction=${transactionID}`
       )
       .subscribe((result) => {
-        if (result.success) {
-          this.openSnackBar('Transaction deleted successfully!', 'Done');
-          this.accountsService.requestUpdate();
-          this.requestUpdate();
-        }
+        this.getResponce$.next(result);
+        this.accountsService.requestUpdate();
+        this.openSnackBar('Transaction deleted successfully!', 'Done');
+        this.spinnerService.hideSpinner();
       });
   }
 }

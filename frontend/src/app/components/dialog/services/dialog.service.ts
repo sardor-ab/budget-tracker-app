@@ -79,15 +79,6 @@ export class DialogService {
       });
   }
 
-  createTransaction(data: Data['transaction']): void {
-    if (data) {
-      data.card = this.cardID;
-    }
-
-    this.transactionService.setNewTransactionData(data!);
-    this.transactionService.startAddingNewTransaction();
-  }
-
   setCurrentCurrency() {
     return this.accountsService.getCurrentCurrency$();
   }

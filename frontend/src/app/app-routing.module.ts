@@ -21,16 +21,19 @@ const routes: Routes = [
     component: RegisterFormComponent,
     canActivate: [AuthGuard],
   },
-  // {
-  //   path: 'dashboard',
-  //   component: DashboardComponent,
-  //   canActivate: [AuthGuard],
-  // },
   {
     path: 'dashboard',
     loadChildren: () =>
       import('./components/dashboard/dashboard.module').then(
         (module) => module.DashboardModule
+      ),
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'categories',
+    loadChildren: () =>
+      import('./components/page-categories/page-categories.module').then(
+        (module) => module.PageCategoriesModule
       ),
     canActivate: [AuthGuard],
   },

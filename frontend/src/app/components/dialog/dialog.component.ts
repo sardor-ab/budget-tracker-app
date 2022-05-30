@@ -1,10 +1,11 @@
-import { Subscription } from 'rxjs';
+import { delay, Subscription } from 'rxjs';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { CategoryService } from 'src/app/config/services/category/category.service';
 import { DialogService } from './services/dialog.service';
 import { CurrencyService } from 'src/app/config/services/currency/currency.service';
+import { CategoryService } from '../categories/service/category.service';
+import { TransactionService } from '../transactions/service/transaction.service';
 
 @Component({
   selector: 'app-dialog',
@@ -17,6 +18,7 @@ export class DialogComponent implements OnInit {
     public data: { title: string; message: string; type: string },
     private dialogService: DialogService,
     private categoryService: CategoryService,
+    private transactionService: TransactionService,
     private currencyService: CurrencyService
   ) {
     const currentYear = new Date();
@@ -75,18 +77,8 @@ export class DialogComponent implements OnInit {
   }
 
   onTypeChange(value: string) {
-    this.fillCategories(value);
+    this.categoryService.getCategories(value);
     this.transactionCategories?.enable();
-  }
-
-  fillCategories(value: string) {
-    this.subscription = this.categoryService
-      .getCategories(value)
-      .subscribe((categories) => {
-        if (categories.success) {
-          this.categories = categories.data;
-        }
-      });
   }
 
   get transactionCategories() {
@@ -149,13 +141,19 @@ export class DialogComponent implements OnInit {
     } else {
       this.notification = true;
     }
+
+    this.subscription = this.categoryService
+      .getCategoryList$()
+      .subscribe((categories) => {
+        this.categories = categories;
+      });
   }
 
   onCreate(): void {
     if (this.data?.type === 'Account') {
       this.dialogService.createAccount(this.accountForm.value);
     } else if (this.data?.type === 'Transaction') {
-      this.dialogService.createTransaction(this.transactionForm.value);
+      this.transactionService.createTransaction(this.transactionForm.value);
     }
   }
 }

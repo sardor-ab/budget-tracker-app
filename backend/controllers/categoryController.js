@@ -17,7 +17,7 @@ export const getCategories = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: true,
-    data: categories,
+    categories: categories,
     count: categories.length,
   });
 });
