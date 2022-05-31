@@ -8,13 +8,13 @@
       <mat-icon
         class="aside__content-header-icons-icon edit"
         (click)="openEditPanel(responce?.title!)"
-        *ngIf="!isTransactionEdit && !isAccountEdit"
+        *ngIf="!isTransactionEdit && !isAccountEdit && !isCategoryEdit"
         >edit</mat-icon
       >
       <mat-icon
         class="aside__content-header-icons-icon delete"
         (click)="deleteAction(responce?.title!)"
-        *ngIf="!isTransactionEdit && !isAccountEdit"
+        *ngIf="!isTransactionEdit && !isAccountEdit && !isCategoryEdit"
         >delete</mat-icon
       >
       <mat-icon
@@ -213,17 +213,21 @@
           <div
             (click)="selectTransactionType('income')"
             class="button-group-item"
-            [ngClass]="currentTransactionType === 'income' ? 'active' : ''"
+            [ngClass]="
+              currentTransactionType === 'income' ? 'active income' : ''
+            "
           >
-            <mat-icon>arrow_upward</mat-icon>
+            <mat-icon>arrow_downward</mat-icon>
             <span>Income</span>
           </div>
           <div
             (click)="selectTransactionType('expense')"
             class="button-group-item"
-            [ngClass]="currentTransactionType === 'expense' ? 'active' : ''"
+            [ngClass]="
+              currentTransactionType === 'expense' ? 'active expense' : ''
+            "
           >
-            <mat-icon>arrow_downward</mat-icon>
+            <mat-icon>arrow_upward</mat-icon>
             <span>Expense</span>
           </div>
         </div>
@@ -294,28 +298,59 @@
           <input matInput formControlName="description" />
         </mat-form-field>
       </form>
+
+      <form
+        [formGroup]="categoryForm"
+        class="aside__content-body-edit-form"
+        *ngIf="isCategoryEdit"
+      >
+        <mat-form-field class="category-edit-form__row" appearance="outline">
+          <mat-label>Title</mat-label>
+          <input matInput formControlName="name" />
+          <mat-error *ngIf="categoryTitle?.errors?.['required']">
+            Title is <strong> required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="category-form__row" appearance="outline">
+          <mat-label>Type</mat-label>
+          <mat-select
+            #selectType
+            formControlName="type"
+            name="selectType"
+            (selectionChange)="(selectType.value)"
+          >
+            <mat-option *ngFor="let type of types" [value]="type.value">
+              {{ type.viewValue }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="categoryTitle?.errors?.['required']">
+            Type is <strong> required</strong>
+          </mat-error>
+        </mat-form-field>
+      </form>
     </div>
   </div>
 
   <div class="aside__content-footer">
     <button
-      *ngIf="!isTransactionEdit && !isAccountEdit"
+      *ngIf="!isTransactionEdit && !isAccountEdit && !isCategoryEdit"
       mat-button
       (click)="onClose()"
     >
       Close
     </button>
     <button
-      *ngIf="isTransactionEdit || isAccountEdit"
+      *ngIf="isTransactionEdit || isAccountEdit || isCategoryEdit"
       mat-button
       (click)="onEditClose()"
     >
       Cancel
     </button>
     <button
-      *ngIf="isTransactionEdit || isAccountEdit"
+      *ngIf="isTransactionEdit || isAccountEdit || isCategoryEdit"
       mat-button
-      [disabled]="isAccountEdit ? accountForm.invalid : transactionForm.invalid"
+      [disabled]="!isFormFilled()"
       (click)="onEditSave()"
       class="btn btn-save"
     >

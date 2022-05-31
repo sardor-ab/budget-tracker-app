@@ -46,6 +46,10 @@ export class SidenavService {
       payee: string;
       type: string;
     };
+    category?: {
+      name: string;
+      type: string;
+    };
   }) {
     this.data$.next(sharedData);
   }

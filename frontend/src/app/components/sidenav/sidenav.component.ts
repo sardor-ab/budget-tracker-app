@@ -30,6 +30,7 @@ export class SidenavComponent implements OnInit {
   categoriesList: ICategory[] = [];
   preSelected: any[] = [];
 
+  isCategoryEdit: boolean = false;
   isTransaction: boolean = false;
   isTransactionEdit: boolean = false;
   isAccount: boolean = false;
@@ -59,6 +60,11 @@ export class SidenavComponent implements OnInit {
       description: string;
       attachment: string;
       payee: string;
+      type: string;
+    };
+    category?: {
+      _id: string;
+      name: string;
       type: string;
     };
   };
@@ -127,29 +133,67 @@ export class SidenavComponent implements OnInit {
     this.transactionType?.setValue(type);
   }
 
+  categoryForm: FormGroup = new FormGroup({
+    _id: new FormControl(''),
+    name: new FormControl('', [Validators.required]),
+    type: new FormControl('', [Validators.required]),
+  });
+
+  types: Type[] = [
+    { value: 'income', viewValue: 'Income' },
+    { value: 'expense', viewValue: 'Expense' },
+  ];
+
+  get categoryTitle() {
+    return this.categoryForm.get('name');
+  }
+
+  get categoryType() {
+    return this.categoryForm.get('type');
+  }
+
   ngOnInit(): void {
     this.subscription = this.sidenavService
       .getSidenavData$()
       .subscribe((state) => {
         this.responce = state;
 
-        if (this.responce?.title === 'Account') {
-          this.isAccount = true;
-          this.isAccountEdit = false;
-          this.isTransaction = false;
-          this.isTransactionEdit = false;
-        } else {
-          this.isTransaction = true;
-          this.isTransactionEdit = false;
-          this.isAccountEdit = false;
-          this.isAccount = false;
+        switch (this.responce?.title) {
+          case 'Account':
+            this.isAccount = true;
+            this.isAccountEdit = false;
+            this.isTransaction = false;
+            this.isTransactionEdit = false;
+            this.isCategoryEdit = false;
+            break;
+          case 'Transaction':
+            this.isAccount = false;
+            this.isAccountEdit = false;
+            this.isTransaction = true;
+            this.isTransactionEdit = false;
+            this.isCategoryEdit = false;
+            break;
+          case 'Category':
+            this.isCategoryEdit = true;
+            this.isAccount = false;
+            this.isAccountEdit = false;
+            this.isTransaction = false;
+            this.isTransactionEdit = false;
+
+            this.categoryTitle?.setValue(this.responce?.category?.name);
+            this.categoryType?.setValue(this.responce?.category?.type);
+            this.categoryForm
+              ?.get('_id')
+              ?.setValue(this.responce?.category?._id);
+
+            break;
         }
       });
 
     this.subscription = this.categoryService
       .getCategoryList$()
-      .subscribe((categories) => {
-        this.categoriesList = categories;
+      .subscribe((result) => {
+        this.categoriesList = result.categories;
       });
   }
 
@@ -168,14 +212,14 @@ export class SidenavComponent implements OnInit {
   openEditPanel(title: string) {
     this.categoriesList = [];
     if (title === 'Account') {
-      this.isAccountEdit = true;
       this.isAccount = false;
+      this.isAccountEdit = true;
 
       this.title?.setValue(this.responce.account?.title);
       this.description?.setValue(this.responce.account?.description);
     } else {
-      this.isTransactionEdit = true;
       this.isTransaction = false;
+      this.isTransactionEdit = true;
 
       this.transactionTitle?.setValue(this.responce.transaction?.title);
       this.transactionDescription?.setValue(
@@ -203,33 +247,54 @@ export class SidenavComponent implements OnInit {
   }
 
   onClose() {
-    this.isTransaction = false;
-    this.isTransactionEdit = false;
     this.isAccount = false;
+    this.isTransaction = false;
     this.isAccountEdit = false;
+    this.isCategoryEdit = false;
+    this.isTransactionEdit = false;
     this.sidenavService.hideSideNav();
   }
 
   onEditSave() {
-    if (this.responce?.title === 'Account') {
-      this.accountForm
-        .get('currency')
-        ?.setValue(this.responce.account?.currency);
-      this.accountForm.get('balance')?.setValue(this.responce.account?.balance);
-      this.accountForm.get('type')?.setValue(this.responce.account?.type);
+    switch (this.responce?.title) {
+      case 'Account':
+        this.accountForm
+          .get('currency')
+          ?.setValue(this.responce.account?.currency);
+        this.accountForm
+          .get('balance')
+          ?.setValue(this.responce.account?.balance);
+        this.accountForm.get('type')?.setValue(this.responce.account?.type);
 
-      this.accountsService.editAccount(
-        this.accountForm.value,
-        this.responce.account?._id!
-      );
-    } else {
-      this.transactionService.editTransaction(
-        this.transactionForm.value,
-        this.responce.transaction?._id!
-      );
+        this.accountsService.editAccount(
+          this.accountForm.value,
+          this.responce.account?._id!
+        );
+        break;
+      case 'Transaction':
+        this.transactionService.editTransaction(
+          this.transactionForm.value,
+          this.responce.transaction?._id!
+        );
+        break;
+      case 'Category':
+        this.categoryService.updateCategory(this.categoryForm.value);
+        break;
     }
 
     this.onClose();
+  }
+
+  isFormFilled(): boolean {
+    switch (this.responce?.title) {
+      case 'Transaction':
+        return this.transactionForm.valid;
+      case 'Account':
+        return this.accountForm.valid;
+      case 'Category':
+        return this.categoryForm.valid;
+    }
+    return false;
   }
 
   onEditClose() {
@@ -243,14 +308,22 @@ export class SidenavComponent implements OnInit {
   }
 
   deleteAction(title: string) {
-    if (title === 'Account') {
-      this.accountsService.deleteAccount(this.responce.account?._id!);
-    } else if (title === 'Transaction') {
-      this.transactionService.deleteTransaction(
-        this.responce.transaction?.card!,
-        this.responce.transaction?._id!
-      );
+    switch (title) {
+      case 'Account':
+        this.accountsService.deleteAccount(this.responce.account?._id!);
+        break;
+      case 'Transaction':
+        this.transactionService.deleteTransaction(
+          this.responce.transaction?.card!,
+          this.responce.transaction?._id!
+        );
+        break;
     }
+
     this.onClose();
   }
+}
+interface Type {
+  value: string;
+  viewValue: string;
 }

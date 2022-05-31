@@ -28,21 +28,7 @@ const getUserAccounts = asyncHandler(async (req, res) => {
   return res.json({
     success: true,
     data: accounts,
-    // message: "At least one account is available",
   });
-  // if (accounts.length != 0) {
-  //   res.json({
-  //     success: true,
-  //     data: accounts,
-  //     message: "At least one account is available",
-  //   });
-  // } else {
-  //   res.status(204).json({
-  //     success: false,
-  //     data: [],
-  //     message: "No available accounts!",
-  //   });
-  // }
 });
 
 //@description Provide the accounts based on ID

@@ -143,13 +143,39 @@
   </mat-form-field>
 </form>
 
+<form [formGroup]="categoryForm" mat-dialog-content *ngIf="creatingCategory">
+  <mat-form-field class="category-form__row" appearance="outline">
+    <mat-label>Title</mat-label>
+    <input matInput placeholder="Title" formControlName="name" />
+    <mat-error *ngIf="categoryTitle?.errors?.['required']">
+      Name for a category is <strong> required</strong>
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field class="category-form__row" appearance="outline">
+    <mat-label>Type</mat-label>
+    <mat-select
+      #selectType
+      formControlName="type"
+      name="selectType"
+      (selectionChange)="(selectType.value)"
+    >
+      <mat-option *ngFor="let type of types" [value]="type.value">
+        {{ type.viewValue }}
+      </mat-option>
+    </mat-select>
+    <mat-error *ngIf="transactionType?.errors?.['required']">
+      Type for a transaction is <strong> required</strong>
+    </mat-error>
+  </mat-form-field>
+</form>
+
 <div mat-dialog-actions>
   <button mat-button mat-dialog-close="close">Close</button>
   <button
     mat-button
     mat-dialog-close="success"
     *ngIf="!notification"
-    [disabled]="creatingAccount ? accountForm.invalid : transactionForm.invalid"
+    [disabled]="!isFormFilled()"
     (click)="onCreate()"
   >
     Create

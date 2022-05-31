@@ -1,0 +1,49 @@
+@use "../../../../colors.scss" as colors;
+
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+
+  &__text {
+    align-self: center;
+  }
+}
+
+.category {
+  padding: 8px;
+  margin-bottom: 8px;
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  cursor: pointer;
+
+  &__name {
+    margin-right: 8px;
+  }
+
+  &__actions {
+    cursor: pointer;
+  }
+
+  &.new {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    margin-right: 0;
+
+    > .category__name {
+      margin-right: 0;
+    }
+  }
+  &.income {
+    border: 1px solid colors.$success;
+  }
+
+  &.expense {
+    border: 1px solid colors.$error;
+  }
+}
+::ng-deep {
+  .mat-divider {
+    margin: 0 16px !important;
+  }
+}

@@ -1,1 +1,36 @@
-<p>categories works!</p>
+<ng-container *ngIf="categories && !noItems">
+  <div class="categories">
+    <div class="category new" (click)="createCategory()">
+      <mat-icon class="category__actions-action add">add</mat-icon>
+      <span class="category__name">Add new</span>
+    </div>
+    <mat-divider [vertical]="true"></mat-divider>
+    <div
+      class="category"
+      *ngFor="let category of categories"
+      [ngClass]="category.type"
+    >
+      <span class="category__name">{{ category.name }}</span>
+      <div class="category__actions">
+        <mat-icon
+          class="category__actions-action edit"
+          (click)="editCategory(category)"
+          >edit</mat-icon
+        >
+        <mat-icon
+          class="category__actions-action delete"
+          (click)="deleteCategory(category)"
+          >delete</mat-icon
+        >
+      </div>
+    </div>
+  </div>
+</ng-container>
+<div class="categories" *ngIf="noItems">
+  <div class="category new" (click)="createCategory()">
+    <mat-icon class="category__actions-action add">add</mat-icon>
+    <span class="category__name">Add new</span>
+  </div>
+  <mat-divider [vertical]="true"></mat-divider>
+  <span class="categories__text">No categories yet...</span>
+</div>

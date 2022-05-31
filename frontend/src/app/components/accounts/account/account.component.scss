@@ -2,6 +2,15 @@
   font-size: $value;
   line-height: $value;
 }
+
+@mixin text-overflow {
+  display: block;
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .account {
   border-radius: 10px;
   background: rgb(248, 93, 108);
@@ -21,20 +30,23 @@
     padding: 1em;
     color: #fff;
 
-    &-right-title {
-      @include fontSW(2em);
-      opacity: 0.75;
+    &-right {
+      width: 50%;
+      &-title {
+        @include fontSW(2em);
+        opacity: 0.75;
 
-      display: block;
-      white-space: nowrap;
-      width: 5em;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+        @include text-overflow;
+      }
 
-    &-right-balance {
-      @include fontSW(2em);
-      opacity: 1;
+      &-balance {
+        @include fontSW(2em);
+        opacity: 1;
+
+        &-amount {
+          @include text-overflow;
+        }
+      }
     }
   }
 

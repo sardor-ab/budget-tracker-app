@@ -1,7 +1,7 @@
 <form class="list">
   <!-- <app-search-bar (search)="search_request('works')"></app-search-bar> -->
   <div class="list__filters">
-    <div class="list__filters-type">
+    <div class="list__filters-type" [ngClass]="type">
       <div
         class="filter"
         *ngFor="let type of types"

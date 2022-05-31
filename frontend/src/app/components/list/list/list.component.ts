@@ -1,9 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { delay, Subscription } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Subscription } from 'rxjs';
 import { IItemsResponceModel } from 'src/app/models/ResponceModels';
 import { CategoryService } from '../../categories/service/category.service';
 import { TransactionService } from '../../transactions/service/transaction.service';
-import { ListService } from '../services/list.service';
 
 @Component({
   selector: 'app-list',
@@ -14,10 +14,14 @@ export class ListComponent implements OnInit {
   constructor(
     private transactionService: TransactionService,
     private categoryService: CategoryService,
-    private listService: ListService
+    private _snackBar: MatSnackBar
   ) {}
 
   @Input() type!: string;
+
+  openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action, { duration: 5000 });
+  }
 
   subscription: Subscription = new Subscription();
 
@@ -34,12 +38,12 @@ export class ListComponent implements OnInit {
   types: IFilter[] = [
     {
       label: 'income',
-      icon: 'arrow_upward',
+      icon: 'arrow_downward',
       method: () => this.sortByType('income'),
     },
     {
       label: 'expense',
-      icon: 'arrow_downward',
+      icon: 'arrow_upward',
       method: () => this.sortByType('expense'),
     },
   ];
@@ -72,11 +76,11 @@ export class ListComponent implements OnInit {
 
       case 'categories':
         this.subscription = this.categoryService
-          .shouldUpdate$()
-          .subscribe((state) => {
-            if (state) {
-              this.categoryService.getCategories(this.selectedFilterType);
-            }
+          .getCategoryList$()
+          .subscribe((result) => {
+            this.categories = result.categories;
+            this.noItems = this.categories?.length === 0;
+            this.canUseFilters = result.success;
           });
         break;
     }
@@ -99,7 +103,7 @@ export class ListComponent implements OnInit {
         this.transactionService.setFilterType(this.selectedFilterType);
         break;
       case 'categories':
-        this.categoryService.setUpdateState(true);
+        this.categoryService.setFilterType(this.selectedFilterType);
         break;
     }
   }

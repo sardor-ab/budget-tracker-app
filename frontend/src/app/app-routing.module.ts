@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-// import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { FormComponent } from './components/login/form/form.component';
 import { RegisterFormComponent } from './components/registration/register-form/register-form.component';
 import { AuthGuard } from './config/guards/auth.guard';

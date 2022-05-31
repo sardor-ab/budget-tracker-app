@@ -1,4 +1,4 @@
-import { delay, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
@@ -40,6 +40,7 @@ export class DialogComponent implements OnInit {
   notification: boolean = false;
   creatingAccount: boolean = false;
   creatingTransaction: boolean = false;
+  creatingCategory: boolean = false;
 
   typeSelected: boolean = false;
 
@@ -77,8 +78,17 @@ export class DialogComponent implements OnInit {
   }
 
   onTypeChange(value: string) {
-    this.categoryService.getCategories(value);
-    this.transactionCategories?.enable();
+    switch (this.data?.type) {
+      case 'Account':
+        break;
+      case 'Transaction':
+        this.categoryService.getCategories(value);
+        this.transactionCategories?.enable();
+        break;
+      case 'Category':
+        this.categoryType?.setValue(value);
+        break;
+    }
   }
 
   get transactionCategories() {
@@ -130,30 +140,68 @@ export class DialogComponent implements OnInit {
   //   return this.accountForm.get('type');
   // }
 
+  categoryForm: FormGroup = new FormGroup({
+    name: new FormControl('', [Validators.required]),
+    type: new FormControl('', [Validators.required]),
+  });
+
+  get categoryTitle() {
+    return this.categoryForm.get('name');
+  }
+
+  get categoryType() {
+    return this.categoryForm.get('type');
+  }
+
+  isFormFilled(): boolean {
+    switch (this.data?.type) {
+      case 'Transaction':
+        return this.transactionForm.valid;
+      case 'Account':
+        return this.accountForm.valid;
+      case 'Category':
+        return this.categoryForm.valid;
+    }
+    return false;
+  }
+
   ngOnInit(): void {
     this.title = this.data?.title;
     this.message = this.data?.message;
-    if (this.data?.type === 'Transaction') {
-      this.creatingTransaction = true;
-    } else if (this.data?.type === 'Account') {
-      this.creatingAccount = true;
-      this.fillCurrencies();
-    } else {
-      this.notification = true;
+    switch (this.data?.type) {
+      case 'Notification':
+        this.notification = true;
+        break;
+      case 'Account':
+        this.creatingAccount = true;
+        this.fillCurrencies();
+        break;
+      case 'Transaction':
+        this.creatingTransaction = true;
+        break;
+      case 'Category':
+        this.creatingCategory = true;
+        break;
     }
 
     this.subscription = this.categoryService
       .getCategoryList$()
-      .subscribe((categories) => {
-        this.categories = categories;
+      .subscribe((result) => {
+        this.categories = result.categories;
       });
   }
 
   onCreate(): void {
-    if (this.data?.type === 'Account') {
-      this.dialogService.createAccount(this.accountForm.value);
-    } else if (this.data?.type === 'Transaction') {
-      this.transactionService.createTransaction(this.transactionForm.value);
+    switch (this.data?.type) {
+      case 'Transaction':
+        this.transactionService.createTransaction(this.transactionForm.value);
+        break;
+      case 'Account':
+        this.dialogService.createAccount(this.accountForm.value);
+        break;
+      case 'Category':
+        this.categoryService.createCategory(this.categoryForm.value);
+        break;
     }
   }
 }

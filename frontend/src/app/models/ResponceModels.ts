@@ -35,4 +35,5 @@ export interface ITransaction {
 export interface ICategory {
   name: string;
   type: string;
+  _id: string;
 }

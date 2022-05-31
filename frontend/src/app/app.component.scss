@@ -3,6 +3,7 @@
 .sidenav {
   &__aside {
     min-width: 35rem;
+    max-width: 50%;
     z-index: 9999;
 
     &-content {

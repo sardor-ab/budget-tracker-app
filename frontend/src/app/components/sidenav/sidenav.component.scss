@@ -1,6 +1,15 @@
 @use "../../../mixins.scss" as mixin;
 @use "../../../colors.scss" as color;
 
+@mixin text-overflow($value) {
+  display: block;
+  white-space: nowrap;
+  width: 100%;
+  text-align: $value;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .aside__content {
   height: 100%;
   position: relative;
@@ -15,8 +24,8 @@
       line-height: 2rem;
 
       @include mixin.for-tablet-down {
-        font-size: 1.5rem;
-        line-height: 1.5rem;
+        font-size: 1.25rem;
+        line-height: 1.25rem;
       }
     }
 
@@ -55,6 +64,9 @@
           font-size: 36px;
           line-height: 36px;
           color: color.$error;
+          max-width: 50%;
+          @include text-overflow(end);
+
           &::before {
             content: "-";
           }
@@ -74,6 +86,8 @@
         &-text {
           font-size: 24px;
           line-height: 24px;
+          max-width: 95%;
+          @include text-overflow(start);
         }
       }
 
@@ -110,6 +124,7 @@
         }
         &-right {
           flex: 0.75;
+          @include text-overflow(start);
 
           &-text {
             font-weight: 300;
@@ -140,6 +155,16 @@
             padding: 8px;
             border-radius: 10px;
             border: 1px solid #000;
+
+            &.income {
+              background-color: color.$success;
+              color: #fff;
+            }
+
+            &.expense {
+              background-color: color.$error;
+              color: #fff;
+            }
 
             &.active {
               opacity: 1;

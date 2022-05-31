@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ITransaction } from 'src/app/models/ResponceModels';
-import { Subscription } from 'rxjs';
 import { SidenavService } from '../sidenav/services/sidenav.service';
 
 @Component({
@@ -14,8 +13,6 @@ export class TransactionsComponent implements OnInit {
   @Input() transactions!: ITransaction[];
   @Input() noItems!: boolean;
 
-  subscription: Subscription = new Subscription();
-
   ngOnInit(): void {}
 
   editTransaction(transaction: ITransaction): void {
@@ -26,9 +23,5 @@ export class TransactionsComponent implements OnInit {
 
     this.sidenavService.setSidenavData$(data);
     this.sidenavService.showSideNav();
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
   }
 }

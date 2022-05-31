@@ -1,6 +1,6 @@
 <header class="header" *ngIf="isUserLoggedIn">
   <div class="header__content">
-    <div class="header__content-logo">
+    <div class="header__content-logo" (click)="redirect('/dashboard')">
       <img
         src="../../../assets/images/Budget_Track_App.png"
         alt="Budget Track App"
