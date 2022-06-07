@@ -1,26 +1,26 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
+import {
+  IItemsResponceModel,
+  ISubscription,
+} from 'src/app/models/ResponceModels';
 import {
   BehaviorSubject,
   asyncScheduler,
   Subject,
-  Subscription,
   of,
+  Subscription,
 } from 'rxjs';
 import { observeOn } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { AccountsService } from '../../accounts/services/accounts.service';
-import {
-  IItemsResponceModel,
-  ITransaction,
-} from 'src/app/models/ResponceModels';
 import { SpinnerService } from '../../spinner/services/spinner.service';
+import { AccountsService } from '../../accounts/services/accounts.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class TransactionService {
+export class SubscriptionService {
   constructor(
     private _snackBar: MatSnackBar,
     private httpClient: HttpClient,
@@ -31,47 +31,40 @@ export class TransactionService {
       .getCurrentID$()
       .subscribe((id: string) => {
         if (id) {
-          this.getTransactions(id, this.filterType, this.filterDate);
+          this.getSubscriptions(id, -1);
         }
       });
   }
   openSnackBar(message: string, action: string) {
     this._snackBar.open(message, action, { duration: 5000 });
   }
-
   subscription: Subscription = new Subscription();
-
-  private filterType: string = 'all';
-  setFilterType(filterType: string) {
-    this.filterType = filterType;
-    this.getTransactions(this.cardID, this.filterType, this.filterDate);
-  }
-  private filterDate: number = -1;
-  setFilterDate(filterDate: number) {
-    this.filterDate = filterDate;
-    this.getTransactions(this.cardID, this.filterType, this.filterDate);
-  }
-
   private cardID: string = '';
 
   private getResponce$: Subject<IItemsResponceModel> =
     new BehaviorSubject<IItemsResponceModel>({
       success: false,
       message: '',
-      transactions: [],
+      subscriptions: [],
     });
 
-  getTransactionList$() {
+  private filterDate: number = -1;
+  setFilterDate(filterDate: number) {
+    this.filterDate = filterDate;
+    this.getSubscriptions(this.cardID, this.filterDate);
+  }
+
+  getSubscriptionList$() {
     this.spinnerService.showSpinner();
     return this.getResponce$.asObservable().pipe(observeOn(asyncScheduler));
   }
 
-  getTransactions(id: string, filterType: string, filterDate: number) {
+  getSubscriptions(id: string, filterDate: number) {
     if (!id) {
       return of<IItemsResponceModel>({
         success: false,
-        message: 'No transactions found!',
-        transactions: [],
+        message: 'No subscriptions found!',
+        subscriptions: [],
       });
     }
 
@@ -79,7 +72,7 @@ export class TransactionService {
 
     return this.httpClient
       .get<IItemsResponceModel>(
-        `${environment.api}transactions/${id}?type=${filterType}&date=${filterDate}`
+        `${environment.api}subscriptions/${id}?date=${filterDate}`
       )
       .subscribe((result) => {
         this.getResponce$.next(result);
@@ -87,48 +80,46 @@ export class TransactionService {
       });
   }
 
-  editTransaction(data: ITransaction, transactionID: string) {
+  createSubscription(subscription: ISubscription) {
+    this.spinnerService.showSpinner();
+
+    return this.httpClient
+      .post<IItemsResponceModel>(
+        `${environment.api}subscriptions/create/?card=${this.cardID}`,
+        subscription
+      )
+      .subscribe((result) => {
+        this.getResponce$.next(result);
+        this.openSnackBar(result.message!, 'Done');
+        this.spinnerService.hideSpinner();
+      });
+  }
+
+  updateSubscription(subscription: ISubscription, subscriptionID: string) {
     this.spinnerService.showSpinner();
 
     return this.httpClient
       .put<IItemsResponceModel>(
-        `${environment.api}transactions/update/?card=${this.cardID}&transaction=${transactionID}`,
-        data
+        `${environment.api}subscriptions/update/?subscription=${subscriptionID}`,
+        subscription
       )
       .subscribe((result) => {
-        this.getTransactions(this.cardID, 'all', -1);
-        this.accountsService.requestUpdate();
+        this.getSubscriptions(this.cardID, this.filterDate);
         this.openSnackBar(result.message!, 'Done');
         this.spinnerService.hideSpinner();
       });
   }
 
-  createTransaction(data: ITransaction) {
-    this.spinnerService.showSpinner();
-
-    data.card = this.cardID;
-
-    return this.httpClient
-      .post<IItemsResponceModel>(`${environment.api}transactions/create`, data)
-      .subscribe((result) => {
-        this.getResponce$.next(result);
-        this.accountsService.requestUpdate();
-        this.openSnackBar(result.message!, 'Done');
-        this.spinnerService.hideSpinner();
-      });
-  }
-
-  deleteTransaction(cardID: string, transactionID: string) {
+  deleteSubscription(subscriptionID: string) {
     this.spinnerService.showSpinner();
 
     return this.httpClient
       .delete<IItemsResponceModel>(
-        `${environment.api}transactions/delete/?card=${cardID}&transaction=${transactionID}`
+        `${environment.api}subscriptions/delete/?card=${this.cardID}&subscription=${subscriptionID}`
       )
       .subscribe((result) => {
         this.getResponce$.next(result);
-        this.accountsService.requestUpdate();
-        this.openSnackBar('Transaction deleted successfully!', 'Done');
+        this.openSnackBar(result.message!, 'Done');
         this.spinnerService.hideSpinner();
       });
   }

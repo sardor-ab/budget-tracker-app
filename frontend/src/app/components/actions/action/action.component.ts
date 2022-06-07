@@ -8,7 +8,7 @@ import { Component, Input, OnInit } from '@angular/core';
 export class ActionComponent implements OnInit {
   @Input() label!: string;
   @Input() canUse!: boolean;
-  @Input() action!: () => void;
+  @Input() action!: (type: string) => void;
   constructor() {}
 
   ngOnInit(): void {}

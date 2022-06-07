@@ -1,0 +1,28 @@
+@use "../../../../mixins.scss" as mixin;
+
+.subscriptions {
+  height: calc(100vh - 9.5em);
+  margin: 3em 5% 0;
+  display: flex;
+  justify-content: space-between;
+
+  &__right {
+    flex: 0.25;
+  }
+
+  &__center {
+    flex: 0.5;
+  }
+  &__left {
+    flex: 0.15;
+  }
+
+  @include mixin.for-tablet-down {
+    flex-direction: column;
+    justify-content: unset;
+
+    > * {
+      max-width: 100%;
+    }
+  }
+}

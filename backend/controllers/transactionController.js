@@ -96,18 +96,30 @@ const getUserTransactions = asyncHandler(async (req, res) => {
     type = [type];
   }
 
-  const transactions = await Transaction.find({
-    user: req.user,
-    card: req.params.id,
-    type: { $in: type },
-  });
-
-  transactions.sort((a, b) => {
-    if (date === "oldest") {
-      return a.date - b.date;
-    }
-    return b.date - a.date;
-  });
+  const transactions = await Transaction.aggregate([
+    {
+      $set: {
+        card_id: {
+          $toString: "$card",
+        },
+        user_id: {
+          $toString: "$user",
+        },
+      },
+    },
+    {
+      $match: {
+        card_id: req.params.id,
+        user_id: req.user,
+        type: { $in: type },
+      },
+    },
+    {
+      $sort: {
+        date: parseInt(date),
+      },
+    },
+  ]);
 
   return res.json({
     success: true,
@@ -183,7 +195,7 @@ const updateTransaction = asyncHandler(async (req, res) => {
       date
     ) {
       if (error) {
-        res.send(error);
+        return res.send(error);
       } else {
         calculateBalance(user, card);
 

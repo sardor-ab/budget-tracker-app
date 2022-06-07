@@ -1,10 +1,8 @@
 <div
   class="action"
   [ngClass]="canUse ? 'active' : ''"
-  (click)="canUse && action()"
+  (click)="canUse && action(label)"
 >
   <mat-icon class="action__icon">add</mat-icon>
-  <span class="action__label">
-    {{ label }}
-  </span>
+  <span class="action__label"> Add a {{ label }} </span>
 </div>

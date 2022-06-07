@@ -7,6 +7,7 @@ import accountRoutes from "./routes/accountRoutes.js";
 import currencyRoutes from "./routes/currencyRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import transactionRoutes from "./routes/transactionRoutes.js";
+import subscriptionRoutes from "./routes/subscriptionRoutes.js";
 
 dotenv.config();
 
@@ -28,6 +29,7 @@ app.use("/api/accounts", accountRoutes);
 app.use("/api/currencies", currencyRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/transactions", transactionRoutes);
+app.use("/api/subscriptions", subscriptionRoutes);
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
 

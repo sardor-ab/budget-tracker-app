@@ -1,14 +1,22 @@
 <div class="actions">
   <div class="actions__upper">
     <app-action
-      [label]="'Add a Transaction'"
+      [label]="'Transaction'"
       [canUse]="!noAccounts"
-      [action]="onAddTransaction"
+      [action]="onAddAction"
+      *ngIf="type === 'transactions'"
     ></app-action>
     <app-action
-      [label]="'Add a Card'"
+      [label]="'Account'"
       [canUse]="true"
-      [action]="onAddAccount"
+      [action]="onAddAction"
+      *ngIf="type === 'transactions'"
+    ></app-action>
+    <app-action
+      [label]="'Subscription'"
+      [canUse]="!noAccounts"
+      [action]="onAddAction"
+      *ngIf="type === 'subscriptions'"
     ></app-action>
   </div>
   <div class="actions__lower"></div>

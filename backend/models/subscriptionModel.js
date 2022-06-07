@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const transactionSchema = new mongoose.Schema(
+const subscriptionSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
@@ -16,16 +16,23 @@ const transactionSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    categories: [
-      {
-        // Should Add ref
-      },
-    ],
+    categoryList: [],
     amount: {
       type: Number,
       required: true,
     },
-    date: {
+    startDate: {
+      type: Date,
+      required: true,
+    },
+    endDate: {
+      type: Date,
+    },
+    lastPaymentDate: {
+      type: Date,
+      required: true,
+    },
+    nextPaymentDate: {
       type: Date,
       required: true,
     },
@@ -39,12 +46,13 @@ const transactionSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    type: {
+    paymentRepetition: {
       type: String,
       required: true,
     },
-    subscriptionID: {
-      type: mongoose.Schema.Types.ObjectId,
+    durationNumber: {
+      type: Number,
+      required: true,
     },
   },
   {
@@ -52,6 +60,6 @@ const transactionSchema = new mongoose.Schema(
   }
 );
 
-const Transaction = mongoose.model("Transaction", transactionSchema);
+const Subscription = mongoose.model("Subscription", subscriptionSchema);
 
-export default Transaction;
+export default Subscription;

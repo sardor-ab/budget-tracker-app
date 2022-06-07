@@ -3,6 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
 import { IItemsResponceModel } from 'src/app/models/ResponceModels';
 import { CategoryService } from '../../categories/service/category.service';
+import { SubscriptionService } from '../../subscriptions/service/subscription.service';
 import { TransactionService } from '../../transactions/service/transaction.service';
 
 @Component({
@@ -12,6 +13,7 @@ import { TransactionService } from '../../transactions/service/transaction.servi
 })
 export class ListComponent implements OnInit {
   constructor(
+    private subscriptionService: SubscriptionService,
     private transactionService: TransactionService,
     private categoryService: CategoryService,
     private _snackBar: MatSnackBar
@@ -27,12 +29,14 @@ export class ListComponent implements OnInit {
 
   selectedFilterType: string = 'all';
   selectedFilterDate: string = 'latest';
+  selectedDateSorting: number = -1;
 
-  canUseFilters: boolean = false;
   noItems: boolean = true;
+  canUseFilters: boolean = false;
 
   transactions!: IItemsResponceModel['transactions'];
   categories!: IItemsResponceModel['categories'];
+  subscriptions!: IItemsResponceModel['subscriptions'];
 
   // STATIC DATA
   types: IFilter[] = [
@@ -51,13 +55,11 @@ export class ListComponent implements OnInit {
   dates: IFilter[] = [
     {
       label: 'latest',
-
-      method: () => this.sortByDate('latest'),
+      method: () => this.sortByDate(-1),
     },
     {
       label: 'oldest',
-
-      method: () => this.sortByDate('oldest'),
+      method: () => this.sortByDate(1),
     },
   ];
   // !STATIC DATA
@@ -83,13 +85,34 @@ export class ListComponent implements OnInit {
             this.canUseFilters = result.success;
           });
         break;
+      case 'subscriptions':
+        this.subscription = this.subscriptionService
+          .getSubscriptionList$()
+          .subscribe((result) => {
+            this.subscriptions = result.subscriptions;
+            this.noItems = result.subscriptions?.length === 0;
+            this.canUseFilters = result.success;
+          });
+        break;
     }
   }
 
   // SORTING
-  sortByDate(filter: string): void {
-    this.selectedFilterDate = filter;
-    this.transactionService.setFilterDate(this.selectedFilterDate);
+  sortByDate(filter: number): void {
+    this.selectedDateSorting = filter;
+    if (this.selectedDateSorting === -1) {
+      this.selectedFilterDate = 'latest';
+    } else {
+      this.selectedFilterDate = 'oldest';
+    }
+    switch (this.type) {
+      case 'transactions':
+        this.transactionService.setFilterDate(this.selectedDateSorting);
+        break;
+      case 'subscriptions':
+        this.subscriptionService.setFilterDate(this.selectedDateSorting);
+        break;
+    }
   }
 
   sortByType(filter: string): void {

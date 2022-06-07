@@ -1,0 +1,37 @@
+<ng-container *ngIf="noItems">No subscriptions yet...</ng-container>
+<ng-container *ngIf="subscriptions && !noItems">
+  <div
+    class="subscription"
+    *ngFor="let subscription of subscriptions"
+    (click)="updateSubscription(subscription)"
+  >
+    <div class="subscription__left">
+      <span class="subscription__left-category">
+        {{ subscription.categoryList[0] }}
+      </span>
+    </div>
+
+    <div class="subscription__center">
+      <div class="subscription__center-top">
+        <span class="subscription__center-top-text">
+          {{ subscription.title }}
+        </span>
+      </div>
+
+      <div class="subscription__center-bottom">
+        <span class="subscription__center-bottom-date">
+          Next payment date:
+          <strong>
+            {{ subscription.nextPaymentDate | date: "dd.MM.yyyy" }}
+          </strong>
+        </span>
+      </div>
+    </div>
+
+    <div class="subscription__right">
+      <span class="subscription__right-amount">
+        {{ subscription.amount }}
+      </span>
+    </div>
+  </div>
+</ng-container>

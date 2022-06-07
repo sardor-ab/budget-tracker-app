@@ -2,3 +2,18 @@
   display: flex;
   flex-direction: column;
 }
+.subscription-form__row-extra-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+
+  &-icon {
+    margin-bottom: 10px;
+    color: rgb(255, 152, 0);
+  }
+
+  &-text {
+    color: rgb(102, 60, 0);
+  }
+}

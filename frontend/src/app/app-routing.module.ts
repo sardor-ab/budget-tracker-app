@@ -36,6 +36,14 @@ const routes: Routes = [
       ),
     canActivate: [AuthGuard],
   },
+  {
+    path: 'subscriptions',
+    loadChildren: () =>
+      import('./components/page-subscriptions/page-subscriptions.module').then(
+        (module) => module.PageSubscriptionsModule
+      ),
+    canActivate: [AuthGuard],
+  },
 ];
 
 @NgModule({

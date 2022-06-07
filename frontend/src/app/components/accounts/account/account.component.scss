@@ -42,6 +42,7 @@
       &-balance {
         @include fontSW(2em);
         opacity: 1;
+        display: flex;
 
         &-amount {
           @include text-overflow;

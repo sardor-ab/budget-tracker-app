@@ -9,7 +9,7 @@
     <mat-label>Title</mat-label>
     <input matInput placeholder="J.P. Morgan" formControlName="title" />
     <mat-error *ngIf="accountTitle?.errors?.['required']">
-      Title for an account is <strong>required</strong>
+      Title for an account is <strong> required</strong>
     </mat-error>
   </mat-form-field>
 
@@ -88,7 +88,7 @@
       </mat-option>
     </mat-select>
     <mat-error *ngIf="transactionType?.errors?.['required']">
-      Provide for a transaction at least<strong> category</strong>
+      Provide at least<strong> one category</strong>
     </mat-error>
   </mat-form-field>
 
@@ -104,6 +104,10 @@
     <mat-hint>MM/DD/YYYY</mat-hint>
     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
+
+    <mat-error *ngIf="transactionDate?.errors?.['required']">
+      Date of a transaction is <strong> required</strong>
+    </mat-error>
   </mat-form-field>
 
   <mat-form-field
@@ -169,12 +173,150 @@
   </mat-form-field>
 </form>
 
+<form
+  [formGroup]="subscriptionForm"
+  mat-dialog-content
+  *ngIf="creatingSubscription"
+>
+  <mat-form-field class="subscription-form__row" appearance="outline">
+    <mat-label>Title</mat-label>
+    <input matInput placeholder="Title" formControlName="title" />
+    <mat-error
+      *ngIf="subscriptionTitle?.errors?.['required'] || subscriptionTitle?.errors?.['whitespace']"
+    >
+      Title of a subscription is <strong> required</strong>
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="subscription-form__row" appearance="outline">
+    <mat-label>Description</mat-label>
+    <textarea
+      formControlName="description"
+      matInput
+      placeholder="Description of a subscription"
+    ></textarea>
+  </mat-form-field>
+
+  <mat-form-field class="subscription-form__row" appearance="outline">
+    <mat-label>Start date</mat-label>
+    <input
+      matInput
+      [matDatepicker]="picker"
+      placeholder="Choose a start date of a subscription"
+      formControlName="startDate"
+      readonly
+    />
+    <mat-hint>MM/DD/YYYY</mat-hint>
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+    <mat-error *ngIf="subscriptionStartDate?.errors?.['required']">
+      Provide a start date of a subscription
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="subscription-form__row" appearance="outline">
+    <mat-label>Subscription duration</mat-label>
+    <input
+      matInput
+      formControlName="durationNumber"
+      readonly
+      (click)="openDurationPicker()"
+      [value]="tempText"
+    />
+    <mat-hint>By default subscription will last 12 months</mat-hint>
+  </mat-form-field>
+
+  <mat-form-field
+    class="subscription-form__row"
+    appearance="outline"
+    floatLabel="always"
+  >
+    <mat-label>Amount</mat-label>
+    <input matInput placeholder="0" formControlName="amount" type="number" />
+    <span matPrefix>{{ currentCurrency }}&nbsp;</span>
+
+    <span matSuffix>.00</span>
+    <mat-error *ngIf="subscriptionAmount?.errors?.['required']">
+      Amount for a subscription is <strong> required</strong>
+    </mat-error>
+    <mat-error *ngIf="transactionAmount?.errors?.['min']">
+      Amount for a subscription must be <strong> more than 0</strong>
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="subscription-form__row" appearance="outline">
+    <mat-label>Payee</mat-label>
+    <input matInput placeholder="Profiteer" formControlName="payee" />
+    <mat-error *ngIf="subscriptionPayee?.errors?.['required']">
+      Payee from a subscription is <strong> required</strong>
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="transaction-form__row" appearance="outline">
+    <mat-label>Category</mat-label>
+    <mat-select formControlName="categoryList">
+      <mat-option *ngFor="let category of categories" [value]="category.name">
+        {{ category.name }}
+      </mat-option>
+    </mat-select>
+    <mat-error *ngIf="transactionType?.errors?.['required']">
+      Provide at least<strong> one category</strong>
+    </mat-error>
+  </mat-form-field>
+</form>
+
+<form [formGroup]="durationForm" mat-dialog-content *ngIf="choosingDuration">
+  <mat-form-field class="duration-form__row" appearance="outline">
+    <mat-label>Quantity of weeks/months/years</mat-label>
+    <input matInput placeholder="1" formControlName="number" type="number" />
+    <mat-error *ngIf="subscriptionDurationNumber?.errors?.['min']">
+      The minimal allowed duration is <strong> 1</strong>
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="subscription-form__row" appearance="outline">
+    <mat-label>Charge once in ...</mat-label>
+    <mat-select
+      #selectType
+      formControlName="unit"
+      name="selectType"
+      (selectionChange)="(selectType.value)"
+    >
+      <mat-option
+        *ngFor="let durationUnit of durationUnits"
+        [value]="durationUnit.value"
+      >
+        {{ durationUnit.viewValue }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div class="subscription-form__row-extra-info">
+    <mat-icon class="subscription-form__row-extra-info-icon">info</mat-icon>
+    <span class="subscription-form__row-extra-info-text">
+      The subscription will last for
+      <strong
+        >{{ durationForm.value.number }}
+        {{ durationForm.value.unit }}(-s)</strong
+      >
+    </span>
+  </div>
+</form>
+
 <div mat-dialog-actions>
   <button mat-button mat-dialog-close="close">Close</button>
   <button
     mat-button
     mat-dialog-close="success"
-    *ngIf="!notification"
+    *ngIf="choosingDuration"
+    [disabled]="!isFormFilled()"
+    (click)="onProceed()"
+  >
+    Proceed
+  </button>
+  <button
+    mat-button
+    mat-dialog-close="success"
+    *ngIf="!notification && !choosingDuration"
     [disabled]="!isFormFilled()"
     (click)="onCreate()"
   >

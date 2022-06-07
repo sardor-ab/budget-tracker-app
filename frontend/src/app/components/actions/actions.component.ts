@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AccountsService } from '../accounts/services/accounts.service';
 import { SpinnerService } from '../spinner/services/spinner.service';
@@ -17,6 +17,7 @@ export class ActionsComponent implements OnInit {
   ) {}
   noAccounts: boolean = true;
   subscription: Subscription = new Subscription();
+  @Input() type!: string;
 
   ngOnInit(): void {
     this.updateAccessState();
@@ -40,12 +41,8 @@ export class ActionsComponent implements OnInit {
     });
   }
 
-  onAddAccount = (): void => {
-    this.actionsService.addingNew('Account');
-  };
-
-  onAddTransaction = (): void => {
-    this.actionsService.addingNew('Transaction');
+  onAddAction = (type: string): void => {
+    this.actionsService.addingNew(type);
   };
 
   ngOnDestroy(): void {

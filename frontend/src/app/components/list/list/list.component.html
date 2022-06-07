@@ -1,7 +1,11 @@
 <form class="list">
   <!-- <app-search-bar (search)="search_request('works')"></app-search-bar> -->
   <div class="list__filters">
-    <div class="list__filters-type" [ngClass]="type">
+    <div
+      class="list__filters-type"
+      [ngClass]="type"
+      *ngIf="type !== 'subscriptions'"
+    >
       <div
         class="filter"
         *ngFor="let type of types"
@@ -12,7 +16,11 @@
         <span class="filter-label">{{ type.label }}</span>
       </div>
     </div>
-    <div class="list__filters-date" *ngIf="type !== 'categories'">
+    <div
+      class="list__filters-date"
+      [ngClass]="type"
+      *ngIf="type !== 'categories'"
+    >
       <div
         class="filter"
         *ngFor="let date of dates"
@@ -35,5 +43,10 @@
       [categories]="categories!"
       [noItems]="noItems"
     ></app-categories>
+    <app-subscriptions
+      *ngSwitchCase="'subscriptions'"
+      [subscriptions]="subscriptions!"
+      [noItems]="noItems"
+    ></app-subscriptions>
   </div>
 </form>

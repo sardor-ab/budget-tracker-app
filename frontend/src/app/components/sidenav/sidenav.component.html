@@ -8,13 +8,23 @@
       <mat-icon
         class="aside__content-header-icons-icon edit"
         (click)="openEditPanel(responce?.title!)"
-        *ngIf="!isTransactionEdit && !isAccountEdit && !isCategoryEdit"
+        *ngIf="
+          !isTransactionEdit &&
+          !isAccountEdit &&
+          !isCategoryEdit &&
+          !isSubscriptionEdit
+        "
         >edit</mat-icon
       >
       <mat-icon
         class="aside__content-header-icons-icon delete"
         (click)="deleteAction(responce?.title!)"
-        *ngIf="!isTransactionEdit && !isAccountEdit && !isCategoryEdit"
+        *ngIf="
+          !isTransactionEdit &&
+          !isAccountEdit &&
+          !isCategoryEdit &&
+          !isSubscriptionEdit
+        "
         >delete</mat-icon
       >
       <mat-icon
@@ -185,6 +195,84 @@
       <mat-divider></mat-divider> -->
     </div>
 
+    <div
+      class="aside__content-body-table"
+      *ngIf="isSubscription && responce?.subscription"
+    >
+      <div class="aside__content-body-table-upper">
+        <div class="aside__content-body-table-upper-title">
+          <span class="aside__content-body-table-upper-title-text">{{
+            responce?.subscription?.title
+          }}</span>
+        </div>
+        <span class="aside__content-body-table-upper-amount">
+          {{ responce?.subscription?.amount }}
+        </span>
+      </div>
+
+      <div class="aside__content-body-table-categories">
+        <div
+          class="aside__content-body-table-categories-item"
+          *ngFor="let category of responce?.subscription?.categoryList"
+        >
+          {{ category }}
+        </div>
+      </div>
+
+      <div class="aside__content-body-table-row">
+        <div class="aside__content-body-table-row-left">
+          <span class="aside__content-body-table-row-left-text">
+            Payment dates:
+          </span>
+        </div>
+        <div class="aside__content-body-table-row-right">
+          <span class="aside__content-body-table-row-right-text">
+            {{ responce?.subscription?.startDate | date: "dd.MM.yyyy" }}
+          </span>
+          -
+          <span class="aside__content-body-table-row-right-text">
+            {{ responce?.subscription?.endDate | date: "dd.MM.yyyy" }}
+            <sub>*including</sub>
+          </span>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="aside__content-body-table-row">
+        <div class="aside__content-body-table-row-left">
+          <span class="aside__content-body-table-row-left-text"> Payee: </span>
+        </div>
+        <div class="aside__content-body-table-row-right">
+          <span class="aside__content-body-table-row-right-text">
+            {{ responce?.subscription?.payee }}
+          </span>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="aside__content-body-table-row">
+        <div class="aside__content-body-table-row-left">
+          <span class="aside__content-body-table-row-left-text">
+            Description:
+          </span>
+        </div>
+        <div class="aside__content-body-table-row-right">
+          <span class="aside__content-body-table-row-right-text">
+            {{ responce?.subscription?.description }}
+          </span>
+        </div>
+      </div>
+      <!-- <div class="aside__content-body-table-row">
+        <div class="aside__content-body-table-row-left">
+          <span class="aside__content-body-table-row-left-text"> Attachment: </span>
+        </div>
+        <div class="aside__content-body-table-row-right">
+          <span class="aside__content-body-table-row-right-text">
+            {{ responce?.transaction?.attachment }}
+          </span>
+        </div>
+      </div>
+      <mat-divider></mat-divider> -->
+    </div>
+
     <div class="aside__content-body-edit">
       <form
         [formGroup]="accountForm"
@@ -329,26 +417,159 @@
           </mat-error>
         </mat-form-field>
       </form>
+
+      <form
+        [formGroup]="subscriptionForm"
+        class="aside__content-body-edit-form"
+        *ngIf="isSubscriptionEdit"
+      >
+        <mat-form-field
+          class="subscription-edit-form__row"
+          appearance="outline"
+        >
+          <mat-label>Title</mat-label>
+          <input matInput formControlName="title" />
+          <mat-error
+            *ngIf="subscriptionTitle?.errors?.['required'] || subscriptionTitle?.errors?.['whitespace']"
+          >
+            Title is <strong> required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field
+          class="subscription-edit-form__row"
+          appearance="outline"
+        >
+          <mat-label>Categories</mat-label>
+          <mat-select
+            placeholder="Select a category..."
+            formControlName="categoryList"
+            multiple
+            required
+          >
+            <mat-option
+              *ngFor="let category of categoriesList"
+              [value]="category.name"
+            >
+              {{ category.name }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="subscriptionCategoryList?.errors?.['required']">
+            Choose at least one<strong> category</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field
+          class="subscription-edit-form__row"
+          appearance="outline"
+        >
+          <mat-label>Amount</mat-label>
+          <input matInput formControlName="amount" />
+          <mat-error
+            *ngIf="subscriptionAmount?.errors?.['required'] || subscriptionAmount?.errors?.['whitespace']"
+          >
+            Amount is <strong> required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field
+          class="subscription-edit-form__row"
+          appearance="outline"
+        >
+          <mat-label>Payee</mat-label>
+          <input matInput formControlName="payee" />
+          <mat-error
+            *ngIf="subscriptionPayee?.errors?.['required'] || subscriptionPayee?.errors?.['whitespace']"
+          >
+            Payee is <strong> required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field
+          class="subscription-edit-form__row"
+          appearance="outline"
+        >
+          <mat-label>Start date</mat-label>
+          <input
+            matInput
+            [matDatepicker]="picker"
+            placeholder="Choose a start date of a subscription"
+            formControlName="startDate"
+            readonly
+          />
+          <mat-hint>MM/DD/YYYY</mat-hint>
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-error *ngIf="subscriptionStartDate?.errors?.['required']">
+            Provide a start date of a subscription
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field
+          class="subscription-edit-form__row"
+          appearance="outline"
+        >
+          <mat-label>Subscription duration</mat-label>
+          <input
+            matInput
+            formControlName="durationNumber"
+            readonly
+            (click)="openDurationPicker()"
+            [value]="tempEndDateText"
+          />
+          <mat-hint>By default subscription will last 12 months</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field
+          class="subscription-edit-form__row"
+          appearance="outline"
+        >
+          <mat-label>Description</mat-label>
+          <textarea
+            formControlName="description"
+            matInput
+            placeholder="Leave a comment"
+          ></textarea>
+        </mat-form-field>
+      </form>
     </div>
   </div>
 
   <div class="aside__content-footer">
     <button
-      *ngIf="!isTransactionEdit && !isAccountEdit && !isCategoryEdit"
+      *ngIf="
+        !isTransactionEdit &&
+        !isAccountEdit &&
+        !isCategoryEdit &&
+        !isSubscriptionEdit
+      "
       mat-button
       (click)="onClose()"
     >
       Close
     </button>
     <button
-      *ngIf="isTransactionEdit || isAccountEdit || isCategoryEdit"
+      *ngIf="
+        isTransactionEdit ||
+        isAccountEdit ||
+        isCategoryEdit ||
+        isSubscriptionEdit
+      "
       mat-button
       (click)="onEditClose()"
     >
       Cancel
     </button>
     <button
-      *ngIf="isTransactionEdit || isAccountEdit || isCategoryEdit"
+      *ngIf="
+        isTransactionEdit ||
+        isAccountEdit ||
+        isCategoryEdit ||
+        isSubscriptionEdit
+      "
       mat-button
       [disabled]="!isFormFilled()"
       (click)="onEditSave()"

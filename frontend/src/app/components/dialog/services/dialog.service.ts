@@ -15,8 +15,7 @@ export class DialogService {
   constructor(
     private dialog: MatDialog,
     private _snackBar: MatSnackBar,
-    private accountsService: AccountsService,
-    private transactionService: TransactionService
+    private accountsService: AccountsService
   ) {
     this.subscription = this.accountsService
       .getCurrentID$()
@@ -30,6 +29,40 @@ export class DialogService {
   public showMessage = this.dialogMessage.asObservable();
   subscription: Subscription = new Subscription();
   cardID: string = '';
+  private durationValue$: Subject<string> = new BehaviorSubject<string>(
+    '12 months'
+  );
+  private defaultDurationValue: {
+    number: number;
+    unit: string;
+  } = {
+    number: 12,
+    unit: 'months',
+  };
+
+  private chosenDurationValue$: Subject<{ number: number; unit: string }> =
+    new BehaviorSubject<{ number: number; unit: string }>({
+      number: 12,
+      unit: 'months',
+    });
+
+  getChosenDurationValue$() {
+    return this.chosenDurationValue$
+      .asObservable()
+      .pipe(observeOn(asyncScheduler));
+  }
+
+  setChosenDurationValue(value: { number: number; unit: string }) {
+    this.chosenDurationValue$.next(value);
+  }
+
+  getDurationValue$() {
+    return this.durationValue$.asObservable().pipe(observeOn(asyncScheduler));
+  }
+
+  setDuration(duration: string) {
+    this.durationValue$.next(duration);
+  }
 
   provideMessage(message: string) {
     this.dialogMessage.next(message);
@@ -50,11 +83,15 @@ export class DialogService {
         title,
         message: this.getMessage(),
         type,
+        date: this.defaultDurationValue,
       },
     });
 
     dialogRef.afterClosed().subscribe((data) => {
       this.openDialog$.next(false);
+      // if (data && data === 'close') {
+      //   this.showDialog('Notification', 'Notification');
+      // }
     });
     // this.openDialog$.next(true);
   }
